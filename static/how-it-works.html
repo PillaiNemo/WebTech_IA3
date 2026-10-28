@@ -52,18 +52,18 @@
 
   <!-- Header: logo, search (opens Explore in the React app) and the two main actions -->
   <header class="cf-header">
-    <a class="cf-logo" href="http://localhost:5173/">
+    <a class="cf-logo" href="/">
       <span class="cf-logo__mark"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21Z" /><path d="m9 9.5 2 2 4-4" /></svg></span>
       <span class="cf-logo__text"><span class="cf-logo__name">CivicFix</span><span class="cf-logo__tag">Civic Issue Reporting and Tracking</span></span>
     </a>
-    <form class="cf-search cf-header__search" role="search" action="http://localhost:5173/issues" method="get">
+    <form class="cf-search cf-header__search" role="search" action="/issues" method="get">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4 4" /></svg>
       <label class="visually-hidden" for="header-search">Search complaints</label>
       <input id="header-search" class="form-control" type="search" name="q" placeholder="Search complaints, areas or keywords">
     </form>
     <div class="cf-header__actions">
-      <a class="btn btn-ghost d-none d-md-inline-flex" href="http://localhost:5173/track">Track Complaint</a>
-      <a class="btn btn-primary d-none d-sm-inline-flex" href="http://localhost:5173/report"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg> Report an Issue</a>
+      <a class="btn btn-ghost d-none d-md-inline-flex" href="/track">Track Complaint</a>
+      <a class="btn btn-primary d-none d-sm-inline-flex" href="/report"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg> Report an Issue</a>
       <button class="cf-burger d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#side-nav" aria-controls="side-nav" aria-label="Open menu"><span></span><span></span></button>
     </div>
   </header>
@@ -81,10 +81,10 @@
         <div class="cf-side__group">
           <h2 class="cf-side__title" id="side-0">Citizen services</h2>
           <ul class="cf-side__list" aria-labelledby="side-0">
-            <li><a class="cf-side__link" href="http://localhost:5173/"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 11 9-7 9 7" /><path d="M5 10v10h14V10" /></svg> Home</a></li>
-            <li><a class="cf-side__link" href="http://localhost:5173/report"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9Z" /><path d="M14 3v6h6M12 12v6M9 15h6" /></svg> Report an Issue</a></li>
-            <li><a class="cf-side__link" href="http://localhost:5173/track"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="2.5" /><circle cx="18" cy="18" r="2.5" /><path d="M8.5 6H15a3 3 0 0 1 0 6H9a3 3 0 0 0 0 6h6.5" /></svg> Track Complaint</a></li>
-            <li><a class="cf-side__link" href="http://localhost:5173/issues"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2Z" /><path d="M9 4v14m6-12v14" /></svg> Explore Issues</a></li>
+            <li><a class="cf-side__link" href="/"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 11 9-7 9 7" /><path d="M5 10v10h14V10" /></svg> Home</a></li>
+            <li><a class="cf-side__link" href="/report"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9Z" /><path d="M14 3v6h6M12 12v6M9 15h6" /></svg> Report an Issue</a></li>
+            <li><a class="cf-side__link" href="/track"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="2.5" /><circle cx="18" cy="18" r="2.5" /><path d="M8.5 6H15a3 3 0 0 1 0 6H9a3 3 0 0 0 0 6h6.5" /></svg> Track Complaint</a></li>
+            <li><a class="cf-side__link" href="/issues"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2Z" /><path d="M9 4v14m6-12v14" /></svg> Explore Issues</a></li>
           </ul>
         </div>
 
@@ -92,7 +92,7 @@
           <div class="cf-side__rule mb-3" aria-hidden="true"></div>
           <h2 class="cf-side__title" id="side-1">Information</h2>
           <ul class="cf-side__list" aria-labelledby="side-1">
-            <li><a class="cf-side__link" href="http://localhost:5173/impact"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" /></svg> Impact</a></li>
+            <li><a class="cf-side__link" href="/impact"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" /></svg> Impact</a></li>
             <li><a class="cf-side__link" href="how-it-works.html" aria-current="page"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17h.01" /></svg> How It Works</a></li>
             <li><a class="cf-side__link" href="about.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 11v6M12 7.5h.01" /></svg> About</a></li>
             <li><a class="cf-side__link" href="contact.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg> Contact</a></li>
@@ -226,16 +226,16 @@
     <div class="container-xl">
       <div class="row g-4">
         <div class="col-lg-5">
-          <a class="cf-wordmark" href="http://localhost:5173/">CivicFix</a>
+          <a class="cf-wordmark" href="/">CivicFix</a>
           <p class="cf-small mt-2 mb-0" style="max-width: 34ch">Report civic issues in your locality and follow them until they are fixed.</p>
         </div>
         <div class="col-6 col-lg-3">
           <p class="cf-label mb-3">Citizens</p>
           <ul class="cf-footer__links">
-            <li><a class="cf-ulink" href="http://localhost:5173/report">Report an Issue</a></li>
-            <li><a class="cf-ulink" href="http://localhost:5173/track">Track Complaint</a></li>
-            <li><a class="cf-ulink" href="http://localhost:5173/issues">Explore Issues</a></li>
-            <li><a class="cf-ulink" href="http://localhost:5173/impact">Impact</a></li>
+            <li><a class="cf-ulink" href="/report">Report an Issue</a></li>
+            <li><a class="cf-ulink" href="/track">Track Complaint</a></li>
+            <li><a class="cf-ulink" href="/issues">Explore Issues</a></li>
+            <li><a class="cf-ulink" href="/impact">Impact</a></li>
           </ul>
         </div>
         <div class="col-6 col-lg-3">
@@ -244,7 +244,7 @@
             <li><a class="cf-ulink" href="how-it-works.html">How It Works</a></li>
             <li><a class="cf-ulink" href="about.html">About</a></li>
             <li><a class="cf-ulink" href="contact.html">Contact</a></li>
-            <li><a class="cf-ulink" href="http://localhost:5173/admin">Admin</a></li>
+            <li><a class="cf-ulink" href="/admin">Admin</a></li>
           </ul>
         </div>
       </div>

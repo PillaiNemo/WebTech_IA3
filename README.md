@@ -53,6 +53,7 @@ The static pages open by double-clicking `static/about.html`, `static/how-it-wor
 | `MONGODB_URI` | MongoDB connection string |
 | `ADMIN_PASSCODE` | Passcode for `/admin`. The demo value is `CivicFix@2026`. **Change it before any real deployment.** It is only ever checked on the server and never appears in client code. |
 | `NODE_ENV` | `development` or `production` (production hides internal error details) |
+| `TRUST_PROXY` | Only when deployed: `true` makes the rate limiter and voter hash use each visitor's real IP from the host's proxy |
 
 ## 5. Folder structure
 
@@ -157,7 +158,27 @@ Errors always look like `{ "error": true, "status": 400, "message": "..." }`. Li
 - Static pages: About (video), How it works (merge demo, audio, FAQ), Contact (validation errors), Style guide
 - MongoDB shell running a query from `database/queries.md`
 
-## 9. Known limits (honest notes)
+## 9. Deploying (Render + MongoDB Atlas)
+
+The deployed site is **one Node service**: `npm run build` (in the project root) builds the React app into `client/dist`, and Express serves it together with the API, the static pages, the images and the uploads. Any page address that is not a file or an API path is answered with the React app, so reloading `/issues/CF-2026-00003` works.
+
+1. **Database:** a free MongoDB Atlas cluster, with `0.0.0.0/0` in Network Access. Put its string (ending in `/civicfix`) in `server/.env` once and run `npm run seed` to load the sample data.
+2. **Render** → New → Web Service → connect the GitHub repository:
+
+   | Setting | Value |
+   | --- | --- |
+   | Root Directory | *(empty: the project root)* |
+   | Runtime | Node |
+   | Build Command | `npm run build` |
+   | Start Command | `npm start` |
+   | Instance type | Free |
+   | Environment variables | `MONGODB_URI` (Atlas string), `ADMIN_PASSCODE`, `NODE_ENV=production`, `TRUST_PROXY=true` |
+
+3. Open `https://<your-service>.onrender.com/api/health`: it should say `"state":"connected"`. The status page is at `/status`, the API playground at `/api-playground.html`.
+
+Notes: the free instance sleeps after 15 minutes without visitors, so the first visit afterwards takes about a minute. Its disk is temporary, so photos uploaded on the live site disappear when it restarts or redeploys (the sample photos are part of the code and always work). Restarts also log the admin out.
+
+## 10. Known limits (honest notes)
 
 - The illustrations in `client/public/images` are 442–602 px wide, so the hero map looks slightly soft on very large screens.
 - Admin sessions and rate-limit counters live in memory, so restarting the server logs the admin out and resets the counters (fine for a demo; a real deployment would store them).

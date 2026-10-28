@@ -1,6 +1,6 @@
 # static/
 
-Plain HTML pages (Modules 1 to 3) that need no build step. Open them by double-clicking (an internet connection is needed for Google Fonts, Bootstrap and jQuery from their CDNs). While the servers run they are also at http://localhost:5173/static/.
+Plain HTML pages (Modules 1 to 3) that need no build step. While the servers run they are at http://localhost:5173/static/about.html (and on the live site at /static/about.html). An internet connection is needed for Google Fonts, Bootstrap and jQuery from their CDNs. You can also open them by double-clicking, but then links to the React app (Home, Report, Track...) do not work, because they are relative to the site.
 
 | File | What it shows |
 | --- | --- |
