@@ -1,0 +1,10 @@
+[
+  { "id": "pothole", "label": "Pothole", "hint": "Damaged roads", "chip": "Roads", "tone": "roads" },
+  { "id": "garbage", "label": "Garbage / Waste", "hint": "Overflowing bins", "chip": "Waste", "tone": "waste" },
+  { "id": "streetlight", "label": "Streetlight", "hint": "Not working", "chip": "Streetlight", "tone": "light" },
+  { "id": "water", "label": "Water leak", "hint": "Burst or leaking pipes", "chip": "Water", "tone": "drain" },
+  { "id": "sewage", "label": "Drainage", "hint": "Waterlogging, sewage overflow", "chip": "Drainage", "tone": "drain" },
+  { "id": "road", "label": "Road damage", "hint": "Open manholes, broken roads", "chip": "Roads", "tone": "roads" },
+  { "id": "animals", "label": "Stray animals", "hint": "Aggressive or injured strays", "chip": "Animals", "tone": "other" },
+  { "id": "other", "label": "Other", "hint": "Any other issue", "chip": "Other", "tone": "other" }
+]

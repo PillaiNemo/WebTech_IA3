@@ -1,0 +1,67 @@
+{
+  "stats": {
+    "totalReported": 12468,
+    "resolved": 8921,
+    "activeLocalities": 320,
+    "avgResolutionDays": 4.2
+  },
+
+  "heroIssue": {
+    "complaintId": "CF-2026-00398",
+    "title": "Pothole on Main Road",
+    "category": "pothole",
+    "status": "In Progress",
+    "location": { "state": "Tamil Nadu", "district": "Coimbatore", "city": "Anna Nagar" },
+    "imageUrls": ["/images/04-pothole-road-photo.png"],
+    "createdAt": "2026-10-26T08:30:00.000Z"
+  },
+
+  "steps": [
+    { "icon": "report", "tone": "maroon", "key": "how.s1" },
+    { "icon": "track", "tone": "sage", "key": "how.s2" },
+    { "icon": "act", "tone": "maroon", "key": "how.s3" },
+    { "icon": "resolve", "tone": "sage", "key": "how.s4" }
+  ],
+
+  "featuredIssues": [
+    {
+      "complaintId": "CF-2026-00412",
+      "title": "Large pothole near bus stop",
+      "category": "pothole",
+      "severity": "High",
+      "status": "In Progress",
+      "location": { "state": "Tamil Nadu", "district": "Coimbatore", "city": "RS Puram" },
+      "imageUrls": ["/images/04-pothole-road-photo.png"],
+      "upvotes": 41,
+      "reportCount": 5,
+      "createdAt": "2026-10-26T09:30:00.000Z",
+      "resolvedAt": null
+    },
+    {
+      "complaintId": "CF-2026-00419",
+      "title": "Overflowing garbage bin",
+      "category": "garbage",
+      "severity": "Medium",
+      "status": "Reported",
+      "location": { "state": "Tamil Nadu", "district": "Coimbatore", "city": "Saibaba Colony" },
+      "imageUrls": ["/images/05-overflowing-waste-bins.png"],
+      "upvotes": 18,
+      "reportCount": 3,
+      "createdAt": "2026-10-27T07:15:00.000Z",
+      "resolvedAt": null
+    },
+    {
+      "complaintId": "CF-2026-00405",
+      "title": "Streetlight not working",
+      "category": "streetlight",
+      "severity": "Medium",
+      "status": "Acknowledged",
+      "location": { "state": "Tamil Nadu", "district": "Coimbatore", "city": "Kovaipudur" },
+      "imageUrls": ["/images/06-streetlight-photo.png"],
+      "upvotes": 12,
+      "reportCount": 2,
+      "createdAt": "2026-10-25T18:40:00.000Z",
+      "resolvedAt": null
+    }
+  ]
+}
