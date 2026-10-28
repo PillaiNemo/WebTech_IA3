@@ -1,0 +1,94 @@
+/* ==========================================================================
+   pages.css: extra styles for the static About, How it works and Contact
+   pages (Module 1: selectors, box model, gradients, position properties).
+   ========================================================================== */
+
+/* Page hero: a soft gradient band (linear + radial gradients) */
+.sp-hero {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(2.5rem, 5vw, 4rem) 0 clamp(2rem, 4vw, 3rem);
+  background:
+    radial-gradient(600px 300px at 90% 10%, rgba(79, 107, 82, 0.12), transparent 70%),
+    linear-gradient(180deg, var(--cf-surface) 0%, var(--cf-bg) 100%);
+  border-bottom: 1px solid var(--cf-line);
+}
+.sp-hero__art {
+  position: absolute;          /* position property: taken out of the flow */
+  right: -40px;
+  bottom: -10px;
+  width: min(460px, 45vw);
+  mix-blend-mode: darken;
+  opacity: 0.9;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 35%);
+  mask-image: linear-gradient(90deg, transparent, #000 35%);
+}
+.sp-hero .container-xl { position: relative; z-index: 1; }   /* relative: stays above the art */
+@media (max-width: 767.98px) { .sp-hero__art { opacity: 0.25; width: 80vw; } }
+
+/* Box model demo: content + padding + border + margin */
+.sp-box {
+  margin: 0 0 1.5rem;            /* outside the border */
+  padding: 1.5rem;               /* inside the border */
+  border: 1px solid var(--cf-line);
+  border-radius: var(--cf-r-lg);
+  background: var(--cf-surface);
+  box-shadow: var(--cf-shadow);
+}
+
+/* Sticky table of contents (position: sticky) */
+.sp-toc { position: sticky; top: calc(var(--cf-header-h) + 24px); }
+.sp-toc ul { list-style: none; margin: 0; padding: 0; border-left: 2px solid var(--cf-line); }
+.sp-toc a { display: block; padding: 0.35rem 0 0.35rem 1rem; margin-left: -2px; border-left: 2px solid transparent; color: var(--cf-muted); text-decoration: none; font-size: 0.92rem; }
+.sp-toc a:hover, .sp-toc a.is-current { color: var(--cf-maroon); border-left-color: var(--cf-maroon); }
+
+/* Values (About) */
+.sp-value { cursor: pointer; transition: transform var(--cf-med) var(--cf-ease), box-shadow var(--cf-med) var(--cf-ease); }
+.sp-value:hover { transform: translateY(-3px); box-shadow: var(--cf-shadow-lg); }
+.sp-value__icon { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; margin-bottom: 0.9rem; font-size: 1.4rem; }
+.sp-value__more { display: none; color: var(--cf-muted); font-size: 0.9rem; margin: 0.6rem 0 0; }
+
+.sp-video { width: 100%; border-radius: var(--cf-r-lg); border: 1px solid var(--cf-line); background: #1F1B17; box-shadow: var(--cf-shadow-lg); }
+
+/* Steps (How it works) */
+.sp-steps { counter-reset: step; list-style: none; padding: 0; margin: 0; display: grid; gap: 1rem; }
+.sp-step { position: relative; padding-left: 4.25rem; }
+.sp-step::before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  left: 1.25rem;
+  top: 1.5rem;
+  display: grid;
+  place-items: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  background: var(--cf-maroon-tint);
+  color: var(--cf-maroon);
+  font-family: var(--cf-font-display);
+  font-size: 1.1rem;
+}
+.sp-step__details { display: none; margin-top: 0.75rem; color: var(--cf-muted); }
+
+/* Duplicate-merge demo: three reports slide into one (jQuery .animate) */
+.sp-merge { position: relative; height: 230px; border-radius: var(--cf-r-lg); background: url("../images/07-pale-city-map-texture.png") center / cover; border: 1px solid var(--cf-line); overflow: hidden; }
+.sp-merge__card {
+  position: absolute;
+  width: 170px;
+  padding: 0.6rem 0.75rem;
+  background: var(--cf-surface);
+  border-radius: var(--cf-r-sm);
+  box-shadow: var(--cf-shadow);
+  font-size: 0.8rem;
+  color: #1F1B17;
+}
+.sp-merge__card strong { display: block; font-size: 0.85rem; }
+.sp-merge__count { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); display: none; }
+
+/* Contact */
+.sp-sent { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.6rem; }
+.sp-sent li { padding: 0.75rem 1rem; border-radius: var(--cf-r-sm); background: var(--cf-st-resolved-bg); color: var(--cf-text); font-size: 0.9rem; }
+.sp-map { width: 100%; height: 320px; border: 1px solid var(--cf-line); border-radius: var(--cf-r-lg); }
+#contact-success { display: none; }

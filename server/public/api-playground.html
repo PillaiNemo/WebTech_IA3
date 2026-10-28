@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CivicFix API Playground</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg: #F8F2E7; --paper: #FFFDF9; --ink: #1F1B17; --muted: #6B645C; --line: rgba(31,27,23,.12); --maroon: #8F2F2B; --sage: #3B4D3E; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 "Inter", system-ui, sans-serif; }
+    header { padding: 18px 20px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    header strong { font-family: "Libre Caslon Text", Georgia, serif; font-size: 1.4rem; font-weight: 400; }
+    header a { color: var(--maroon); }
+    .layout { display: grid; gap: 16px; padding: 16px; }
+    @media (min-width: 960px) { .layout { grid-template-columns: 430px 1fr; } .out { position: sticky; top: 16px; height: calc(100vh - 110px); } }
+    section { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 16px; margin-bottom: 14px; }
+    h2 { font-family: "Libre Caslon Text", Georgia, serif; font-weight: 400; font-size: 1.15rem; margin: 0 0 10px; }
+    label { display: block; font-size: .8rem; font-weight: 600; margin: 8px 0 4px; }
+    input, select { width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; font: inherit; background: #fff; }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+    button { font: inherit; font-size: .85rem; padding: 7px 12px; border-radius: 6px; border: 1px solid var(--maroon); background: var(--maroon); color: #fff; cursor: pointer; }
+    button.alt { background: transparent; color: var(--maroon); }
+    button:focus-visible, input:focus-visible { outline: 2px solid var(--maroon); outline-offset: 2px; }
+    .method { display: inline-block; font-size: .7rem; font-weight: 700; padding: 1px 6px; border-radius: 4px; margin-right: 4px; background: #DCEBD9; color: #2F6B36; }
+    .out { background: #1F1B17; color: #F3EDE4; border-radius: 14px; padding: 16px; overflow: auto; }
+    .out h2 { color: #F3EDE4; }
+    .status { font-weight: 600; }
+    .ok { color: #9FD7A4; } .warn { color: #F5CF8C; } .bad { color: #F2A2A2; }
+    pre { margin: 0; white-space: pre-wrap; word-break: break-word; font: 13px/1.5 ui-monospace, Consolas, monospace; }
+    .k { color: #F4B497; } .s { color: #9FD7A4; } .n { color: #A9CCE6; } .b { color: #F5CF8C; }
+    small { color: var(--muted); }
+  </style>
+</head>
+<body>
+  <header>
+    <strong>CivicFix API Playground</strong>
+    <span><small>Every button calls a real endpoint and shows the JSON reply on the right.</small> · <a href="/">Server status</a></span>
+  </header>
+
+  <div class="layout">
+    <div>
+      <section>
+        <h2>Settings</h2>
+        <label for="complaint">Complaint ID used by the buttons below</label>
+        <input id="complaint" value="CF-2026-00001">
+        <label for="voter">Voter token (stored in this browser, like the real app)</label>
+        <input id="voter" readonly>
+        <div class="row"><button class="alt" type="button" id="new-voter">New voter (act as someone else)</button></div>
+      </section>
+
+      <section>
+        <h2>Read</h2>
+        <div class="row">
+          <button data-call="health"><span class="method">GET</span>/api/health</button>
+          <button data-call="list"><span class="method">GET</span>/api/issues</button>
+          <button data-call="priority"><span class="method">GET</span>issues?sort=priority</button>
+          <button data-call="search"><span class="method">GET</span>issues?q=pothole</button>
+          <button data-call="detail"><span class="method">GET</span>/api/issues/:id</button>
+          <button data-call="track"><span class="method">GET</span>/api/track/:id</button>
+          <button data-call="nearby"><span class="method">GET</span>nearby (RS Puram pothole)</button>
+          <button data-call="stats"><span class="method">GET</span>/api/stats</button>
+        </div>
+      </section>
+
+      <section>
+        <h2>Report</h2>
+        <div class="row">
+          <button data-call="duplicate">Try to report a duplicate (expect 409)</button>
+          <button data-call="invalid" class="alt">Invalid report (expect 400)</button>
+        </div>
+        <label for="photo">Image upload test (JPG/PNG, max 3 MB)</label>
+        <input id="photo" type="file" accept="image/png,image/jpeg">
+        <div class="row"><button data-call="upload">Create a new report with this photo</button></div>
+      </section>
+
+      <section>
+        <h2>Act on the complaint ID above</h2>
+        <div class="row">
+          <button data-call="upvote">Upvote</button>
+          <button data-call="comment">Comment</button>
+          <button data-call="support">Add my support</button>
+          <button data-call="flag" class="alt">Flag as spam</button>
+          <button data-call="notfixed" class="alt">Still not fixed</button>
+        </div>
+      </section>
+
+      <section>
+        <h2>Admin</h2>
+        <label for="passcode">Passcode</label>
+        <input id="passcode" type="password" value="CivicFix@2026">
+        <div class="row">
+          <button data-call="login">Log in</button>
+          <button data-call="badlogin" class="alt">Wrong passcode (expect 401)</button>
+          <button data-call="admin-list">All issues</button>
+          <button data-call="flagged">Flagged queue</button>
+        </div>
+        <label for="status">New status</label>
+        <select id="status"><option>Acknowledged</option><option>In Progress</option><option>Resolved</option><option>Reported</option></select>
+        <div class="row">
+          <button data-call="set-status">Update status</button>
+          <button data-call="restore" class="alt">Restore (unhide)</button>
+        </div>
+        <label for="master">Merge the complaint above into master ID</label>
+        <input id="master" placeholder="CF-2026-000xx">
+        <div class="row">
+          <button data-call="merge">Merge</button>
+          <button data-call="delete" class="alt">Delete complaint</button>
+        </div>
+      </section>
+    </div>
+
+    <div class="out" aria-live="polite">
+      <h2>Response</h2>
+      <p class="status" id="status-line">Press a button.</p>
+      <pre id="output"></pre>
+    </div>
+  </div>
+
+  <script>
+    // ---- Helpers ----------------------------------------------------------
+    var $ = function (id) { return document.getElementById(id); };
+    var adminToken = sessionStorage.getItem('cf-admin-token') || '';
+
+    function getVoter() {
+      var token = localStorage.getItem('cf-voter');
+      if (!token) { token = crypto.randomUUID(); localStorage.setItem('cf-voter', token); }
+      return token;
+    }
+    $('voter').value = getVoter();
+    $('new-voter').addEventListener('click', function () {
+      localStorage.setItem('cf-voter', crypto.randomUUID());
+      $('voter').value = getVoter();
+    });
+
+    // Turns JSON into coloured HTML (keys, strings, numbers, booleans).
+    function highlight(json) {
+      var safe = JSON.stringify(json, null, 2).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      return safe.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(\.\d+)?)/g, function (m) {
+        var cls = 'n';
+        if (/^"/.test(m)) cls = /:$/.test(m) ? 'k' : 's';
+        else if (/true|false|null/.test(m)) cls = 'b';
+        return '<span class="' + cls + '">' + m + '</span>';
+      });
+    }
+
+    async function call(method, url, body, useAdmin) {
+      $('status-line').textContent = method + ' ' + url + ' ...';
+      var headers = { 'Content-Type': 'application/json' };
+      if (useAdmin) headers.Authorization = 'Bearer ' + adminToken;
+      var started = performance.now();
+      try {
+        var res = await fetch(url, { method: method, headers: headers, body: body ? JSON.stringify(body) : undefined });
+        var data = await res.json();
+        var ms = Math.round(performance.now() - started);
+        var tone = res.status < 300 ? 'ok' : res.status < 500 ? 'warn' : 'bad';
+        $('status-line').innerHTML = '<span class="' + tone + '">' + res.status + '</span> ' + method + ' ' + url + ' <small>(' + ms + ' ms)</small>';
+        $('output').innerHTML = highlight(data);
+        return data;
+      } catch (err) {
+        $('status-line').innerHTML = '<span class="bad">Network error</span>';
+        $('output').textContent = err.message;
+        return null;
+      }
+    }
+
+    function readFileAsDataURL(file) {
+      return new Promise(function (resolve, reject) {
+        var reader = new FileReader();
+        reader.onload = function () { resolve(reader.result); };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    var id = function () { return encodeURIComponent($('complaint').value.trim()); };
+    var voter = function (extra) { return Object.assign({ voterToken: getVoter() }, extra || {}); };
+    var RS_PURAM = { state: 'Tamil Nadu', district: 'Coimbatore', city: 'RS Puram', landmark: 'Green Park bus stop', lat: 11.0089, lng: 76.9518 };
+
+    // ---- One function per button -------------------------------------------
+    var actions = {
+      health: function () { return call('GET', '/api/health'); },
+      list: function () { return call('GET', '/api/issues?limit=5'); },
+      priority: function () { return call('GET', '/api/issues?sort=priority&limit=5'); },
+      search: function () { return call('GET', '/api/issues?q=pothole&limit=5'); },
+      detail: function () { return call('GET', '/api/issues/' + id()); },
+      track: function () { return call('GET', '/api/track/' + id()); },
+      nearby: function () { return call('GET', '/api/issues/nearby?lat=11.0089&lng=76.9518&category=pothole'); },
+      stats: function () { return call('GET', '/api/stats'); },
+      duplicate: function () {
+        return call('POST', '/api/issues', voter({ title: 'Pothole at Green Park bus stop', description: 'There is a big pothole right at the bus stop on DB Road.', category: 'pothole', severity: 'High', location: RS_PURAM }));
+      },
+      invalid: function () { return call('POST', '/api/issues', { title: 'Hi', description: 'Too short', category: 'unknown', location: {} }); },
+      upload: async function () {
+        var file = $('photo').files[0];
+        if (!file) { $('status-line').textContent = 'Choose a JPG or PNG file first.'; return; }
+        var image = await readFileAsDataURL(file);
+        var data = await call('POST', '/api/issues', voter({
+          title: 'Broken footpath near the school gate', description: 'Footpath tiles are broken and children trip on them every morning.',
+          category: 'road', severity: 'Medium', image: image, confirmedNotDuplicate: true,
+          location: { state: 'Kerala', district: 'Ernakulam', city: 'Fort Kochi', landmark: 'School gate', lat: 9.9701, lng: 76.2453 }
+        }));
+        if (data && data.complaintId) $('complaint').value = data.complaintId;
+      },
+      upvote: function () { return call('POST', '/api/issues/' + id() + '/upvote', voter()); },
+      comment: function () { return call('POST', '/api/issues/' + id() + '/comments', voter({ name: 'Playground', text: 'Checked today, still the same.' })); },
+      support: function () { return call('POST', '/api/issues/' + id() + '/support', voter({ note: 'I face this problem too.' })); },
+      flag: function () { return call('POST', '/api/issues/' + id() + '/flag', voter({ reason: 'Testing the spam flag' })); },
+      notfixed: function () { return call('POST', '/api/issues/' + id() + '/not-fixed', voter()); },
+      login: async function () {
+        var data = await call('POST', '/api/admin/login', { passcode: $('passcode').value });
+        if (data && data.token) { adminToken = data.token; sessionStorage.setItem('cf-admin-token', adminToken); }
+      },
+      badlogin: function () { return call('POST', '/api/admin/login', { passcode: 'guess123' }); },
+      'admin-list': function () { return call('GET', '/api/admin/issues', null, true); },
+      flagged: function () { return call('GET', '/api/admin/flagged', null, true); },
+      'set-status': function () { return call('PATCH', '/api/admin/issues/' + id() + '/status', { status: $('status').value, note: 'Updated from the API playground.' }, true); },
+      restore: function () { return call('PATCH', '/api/admin/issues/' + id() + '/restore', {}, true); },
+      merge: function () { return call('PATCH', '/api/admin/issues/' + id() + '/merge', { masterId: $('master').value.trim() }, true); },
+      'delete': function () {
+        if (!confirm('Delete ' + $('complaint').value + ' permanently?')) return;
+        return call('DELETE', '/api/admin/issues/' + id(), null, true);
+      }
+    };
+
+    document.querySelectorAll('[data-call]').forEach(function (btn) {
+      btn.addEventListener('click', function () { actions[btn.getAttribute('data-call')](); });
+    });
+  </script>
+</body>
+</html>

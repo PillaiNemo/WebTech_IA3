@@ -1,0 +1,1399 @@
+/* ==========================================================================
+   CivicFix design system   (static/css/civicfix.css)
+   Shared by the static pages (static/*.html) and the React app (client/).
+   Load it AFTER bootstrap.min.css so these rules win.
+
+   Look: a clean civic-service portal. Warm off-white page, white panels
+   with fine borders, brick-maroon actions, sage-green reassurance,
+   a classic serif for headings and a clean sans-serif for the interface.
+
+   Contents
+   1.  Tokens (colours, fonts, radii, motion) for light and dark themes
+   2.  Base and typography
+   3.  Bootstrap overrides
+   4.  Layout helpers
+   5.  Buttons and links
+   6.  Cards and issue cards
+   7.  Forms, category choices and the step indicator
+   8.  Chips and status badges
+   9.  Toasts, skeleton loaders, empty states, accordion
+   10. Motion utilities (reveal, typewriter, counters, charts, progress)
+   11. Reduced motion
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+   1. TOKENS
+   Light values live on :root. data-theme="dark" (normally on <html>)
+   switches to the dark values; data-theme="light" switches back.
+   -------------------------------------------------------------------------- */
+:root,
+[data-theme="light"] {
+  /* Brand */
+  --cf-maroon: #8F2F2B;          /* primary actions */
+  --cf-maroon-hover: #7A2522;
+  --cf-maroon-tint: #F6E9E6;     /* soft tint behind icons and the active menu item */
+  --cf-sage: #3B4D3E;            /* deep green banner */
+  --cf-sage-mid: #4F6B52;        /* green icons */
+  --cf-sage-tint: #E7EEE6;       /* soft green tint behind icons */
+  --cf-blue: #1F4E79;            /* "Track" and "In Progress" */
+  --cf-blue-tint: #E4EDF7;
+  --cf-amber: #7A4E0B;           /* "Impact" and "Acknowledged" */
+  --cf-amber-tint: #FBF0DC;
+  --cf-cream: #F4EEE3;           /* matches the background of the illustrations */
+  --cf-success: #2E7D46;
+
+  /* Surfaces and text */
+  --cf-bg: #FBF8F2;
+  --cf-surface: #FFFFFF;
+  --cf-surface-2: #F5F1EA;
+  --cf-text: #1F2328;
+  --cf-muted: #5B6169;
+  --cf-line: #E5DED2;
+  --cf-line-strong: #D5CCBD;
+  --cf-link: #8F2F2B;
+  --cf-focus: #8F2F2B;
+  --cf-on-primary: #FFFFFF;
+  --cf-ink: #1F2328;             /* the dark accessibility bar and footer */
+  --cf-on-ink: #E9E4DA;
+  --cf-on-ink-muted: #B8B2A7;
+  --cf-ink-line: #3A3F46;
+  --cf-shadow: 0 1px 2px rgba(31, 35, 40, 0.04);
+  --cf-shadow-lg: 0 2px 6px rgba(31, 35, 40, 0.05), 0 18px 40px -20px rgba(31, 35, 40, 0.28);
+
+  /* Status chips: background + text */
+  --cf-st-reported-bg: #F6E9E6;  --cf-st-reported: #8F2F2B;
+  --cf-st-ack-bg: #FBF0DC;       --cf-st-ack: #7A4E0B;
+  --cf-st-progress-bg: #E4EDF7;  --cf-st-progress: #1F4E79;
+  --cf-st-resolved-bg: #E3EFE5;  --cf-st-resolved: #2E5E3A;
+  --cf-st-merged-bg: #ECE9F1;    --cf-st-merged: #574F72;
+  --cf-critical: #9B1C1C;
+
+  /* Category chips: background + text */
+  --cf-cat-roads-bg: #F6E4DA;    --cf-cat-roads: #8E4128;
+  --cf-cat-waste-bg: #E7EEE0;    --cf-cat-waste: #42613A;
+  --cf-cat-light-bg: #E6E9F0;    --cf-cat-light: #3F4C63;
+  --cf-cat-drain-bg: #E2ECF3;    --cf-cat-drain: #345874;
+  --cf-cat-other-bg: #EFEAE1;    --cf-cat-other: #57504A;
+
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --cf-maroon: #D66A60;
+  --cf-maroon-hover: #E07D74;
+  --cf-maroon-tint: #4A2A27;
+  --cf-sage: #2C3A2F;
+  --cf-sage-mid: #9CC09F;
+  --cf-sage-tint: #2F3B31;
+  --cf-blue: #A9C6E8;
+  --cf-blue-tint: #23344A;
+  --cf-amber: #F5CF8C;
+  --cf-amber-tint: #4A3A20;
+  --cf-cream: #2A2723;
+  --cf-success: #6FBF83;
+
+  --cf-bg: #171615;
+  --cf-surface: #211F1D;
+  --cf-surface-2: #2B2825;
+  --cf-text: #F3EDE4;
+  --cf-muted: #B3AA9E;
+  --cf-line: rgba(243, 237, 228, 0.12);
+  --cf-line-strong: rgba(243, 237, 228, 0.24);
+  --cf-link: #E58A81;
+  --cf-focus: #E58A81;
+  --cf-on-primary: #1B1916;
+  --cf-ink: #0F0E0D;
+  --cf-on-ink: #E9E4DA;
+  --cf-on-ink-muted: #A9A398;
+  --cf-ink-line: #34312D;
+  --cf-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --cf-shadow-lg: 0 2px 6px rgba(0, 0, 0, 0.3), 0 18px 40px -20px rgba(0, 0, 0, 0.7);
+
+  --cf-st-reported-bg: #4A2A27;  --cf-st-reported: #F2B3AB;
+  --cf-st-ack-bg: #4A3A20;       --cf-st-ack: #F5CF8C;
+  --cf-st-progress-bg: #23344A;  --cf-st-progress: #A9C6E8;
+  --cf-st-resolved-bg: #23402A;  --cf-st-resolved: #9FD7A4;
+  --cf-st-merged-bg: #38344A;    --cf-st-merged: #CCC4E2;
+  --cf-critical: #F08C8C;
+
+  --cf-cat-roads-bg: #4A3026;    --cf-cat-roads: #F2B49C;
+  --cf-cat-waste-bg: #2F3D2A;    --cf-cat-waste: #B9D3A8;
+  --cf-cat-light-bg: #2E3442;    --cf-cat-light: #BCC7DB;
+  --cf-cat-drain-bg: #263A48;    --cf-cat-drain: #A9CCE6;
+  --cf-cat-other-bg: #36312A;    --cf-cat-other: #D6CCBE;
+
+  color-scheme: dark;
+}
+
+:root {
+  --cf-font-display: "Libre Caslon Text", "Georgia", "Times New Roman", serif;
+  --cf-font-ui: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+
+  --cf-r-xs: 8px;      /* buttons and inputs */
+  --cf-r-sm: 10px;
+  --cf-r: 12px;        /* cards and tiles */
+  --cf-r-lg: 14px;     /* big panels and banners */
+  --cf-r-pill: 999px;
+
+  --cf-side-w: 264px;  /* width of the side navigation */
+  --cf-header-h: 78px; /* height of the sticky header (for scroll offsets) */
+
+  --cf-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --cf-fast: 0.2s;
+  --cf-med: 0.4s;
+  --cf-slow: 0.8s;
+}
+
+/* Let Bootstrap's own variables follow our tokens in both themes. */
+:root,
+[data-theme="light"],
+[data-theme="dark"] {
+  --bs-body-bg: var(--cf-bg);
+  --bs-body-color: var(--cf-text);
+  --bs-body-font-family: var(--cf-font-ui);
+  --bs-emphasis-color: var(--cf-text);
+  --bs-secondary-color: var(--cf-muted);
+  --bs-border-color: var(--cf-line);
+  --bs-heading-color: inherit;
+  --bs-border-radius: var(--cf-r-xs);
+  --bs-border-radius-lg: var(--cf-r);
+  --bs-focus-ring-color: color-mix(in srgb, var(--cf-focus) 25%, transparent);
+  --bs-form-valid-color: var(--cf-st-resolved);
+  --bs-form-valid-border-color: var(--cf-st-resolved);
+  --bs-form-invalid-color: var(--cf-critical);
+  --bs-form-invalid-border-color: var(--cf-critical);
+}
+
+/* A panel forced into one theme needs its own text colour. */
+[data-theme="light"],
+[data-theme="dark"] { color: var(--cf-text); }
+
+
+/* --------------------------------------------------------------------------
+   2. BASE AND TYPOGRAPHY
+   -------------------------------------------------------------------------- */
+html { scroll-behavior: smooth; }
+
+/* Text size (A− / A / A+ in the accessibility bar). Sizes are in rem,
+   so changing the root size scales the whole interface. */
+html[data-text="sm"] { font-size: 93.75%; }
+html[data-text="lg"] { font-size: 112.5%; }
+
+body {
+  background: var(--cf-bg);
+  color: var(--cf-text);
+  font-family: var(--cf-font-ui);
+  font-size: 1rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, .cf-display, .cf-serif {
+  font-family: var(--cf-font-display);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+h4, h5, h6 { font-family: var(--cf-font-ui); font-weight: 600; letter-spacing: -0.01em; }
+
+.cf-display { font-size: clamp(2.5rem, 5.2vw, 4.25rem); line-height: 1.12; }
+h1, .cf-h1 { font-size: clamp(2rem, 3.6vw, 2.75rem); }
+h2, .cf-h2 { font-size: clamp(1.75rem, 3vw, 2.4rem); }
+h3, .cf-h3 { font-size: clamp(1.35rem, 2vw, 1.6rem); }
+h4, .cf-h4 { font-size: 1.15rem; }
+
+.cf-lead { font-size: clamp(1rem, 1.3vw, 1.12rem); color: var(--cf-muted); line-height: 1.65; max-width: 56ch; }
+.cf-muted { color: var(--cf-muted); }
+.cf-small { font-size: 0.875rem; }
+
+/* Small uppercase label (form groups, metadata) */
+.cf-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cf-muted);
+}
+
+code, .cf-mono { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: 0.9em; }
+
+::selection { background: var(--cf-maroon-tint); color: var(--cf-text); }
+
+:focus-visible {
+  outline: 2px solid var(--cf-focus);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.cf-skip-link {
+  position: absolute;
+  left: 16px;
+  top: -60px;
+  z-index: 2000;
+  background: var(--cf-maroon);
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: var(--cf-r-xs);
+  transition: top var(--cf-fast) var(--cf-ease);
+}
+.cf-skip-link:focus { top: 16px; color: #fff; }
+
+/* Smooth colour change while the theme toggles (class added by JS for 600ms) */
+.cf-theme-anim,
+.cf-theme-anim *,
+.cf-theme-anim *::before,
+.cf-theme-anim *::after {
+  transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease !important;
+}
+
+
+/* --------------------------------------------------------------------------
+   3. BOOTSTRAP OVERRIDES
+   -------------------------------------------------------------------------- */
+a { color: var(--cf-link); text-underline-offset: 3px; }
+a:hover { color: var(--cf-maroon-hover); }
+
+hr { border-color: var(--cf-line); opacity: 1; }
+
+.cf-wordmark {
+  font-family: var(--cf-font-display);
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--cf-text);
+  text-decoration: none;
+}
+.cf-wordmark:hover { color: var(--cf-text); }
+
+/* ---- Site shell: accessibility bar, header, side navigation, footer ---- */
+
+/* Dark accessibility bar along the very top */
+.cf-utility {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.25rem 1rem;
+  padding: 0.3rem clamp(1rem, 3vw, 2rem);
+  background: var(--cf-ink);
+  color: var(--cf-on-ink);
+  font-size: 0.8rem;
+}
+.cf-utility a { color: var(--cf-on-ink); text-decoration: none; }
+.cf-utility a:hover { color: #FFFFFF; text-decoration: underline; }
+.cf-utility__tools { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem; }
+.cf-utility__label { margin-right: 0.35rem; color: var(--cf-on-ink-muted); }
+.cf-utility__sep { width: 1px; height: 18px; margin: 0 0.5rem; background: var(--cf-ink-line); }
+.cf-utility__btn {
+  display: inline-grid;
+  place-items: center;
+  min-width: 34px;
+  height: 30px;
+  padding: 0 0.55rem;
+  border: 1px solid var(--cf-ink-line);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--cf-on-ink);
+  font-size: 0.8rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color var(--cf-fast) ease, color var(--cf-fast) ease;
+}
+.cf-utility__btn:hover { background: rgba(255, 255, 255, 0.08); }
+.cf-utility__btn[aria-pressed="true"] { background: var(--cf-on-ink); border-color: var(--cf-on-ink); color: var(--cf-ink); font-weight: 600; }
+.cf-utility__btn--text { border-color: transparent; }
+.cf-utility__btn--text[aria-pressed="true"] { background: transparent; border-color: transparent; color: #FFFFFF; text-decoration: underline; text-underline-offset: 4px; }
+.cf-utility__btn .cf-theme-icon { width: 15px; height: 15px; }
+.cf-utility :focus-visible { outline-color: #FFFFFF; }
+@media (max-width: 575.98px) {
+  .cf-utility { justify-content: flex-end; }
+  .cf-utility__label { display: none; }
+  /* The skip link stays reachable by keyboard and appears when focused. */
+  .cf-utility > a:not(:focus) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .cf-utility__sep { margin: 0 0.3rem; }
+}
+
+/* White header with the logo, search and the two main actions */
+.cf-header {
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.25rem;
+  min-height: var(--cf-header-h);
+  padding: 0.75rem clamp(1rem, 3vw, 2rem);
+  background: var(--cf-surface);
+  border-bottom: 1px solid var(--cf-line);
+}
+.cf-logo { display: inline-flex; align-items: center; gap: 0.8rem; color: var(--cf-text); text-decoration: none; }
+.cf-logo:hover { color: var(--cf-text); }
+.cf-logo__mark {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: var(--cf-maroon);
+  color: #FFFFFF;
+}
+[data-theme="dark"] .cf-logo__mark { background: #8F2F2B; }
+.cf-logo__text { display: flex; flex-direction: column; gap: 0.15rem; line-height: 1; }
+.cf-logo__name { font-family: var(--cf-font-display); font-size: 1.45rem; font-weight: 700; letter-spacing: -0.01em; }
+.cf-logo__tag { font-size: 0.72rem; color: var(--cf-muted); }
+
+.cf-header__search { flex: 1 1 260px; max-width: 460px; }
+.cf-header__search .form-control { background-color: var(--cf-surface-2); border-color: var(--cf-line); min-height: 44px; }
+.cf-header__actions { display: flex; align-items: center; gap: 0.6rem; }
+.cf-header__actions .btn { min-height: 44px; }
+
+/* Hamburger (opens the side navigation on small screens) */
+.cf-burger {
+  display: grid;
+  place-content: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--cf-line-strong);
+  border-radius: var(--cf-r-xs);
+  background: var(--cf-surface);
+  color: var(--cf-text);
+  cursor: pointer;
+}
+.cf-burger span {
+  display: block;
+  width: 18px;
+  height: 1.5px;
+  background: currentColor;
+  transition: transform var(--cf-med) var(--cf-ease);
+}
+.cf-burger.is-close span:first-child { transform: translateY(3.25px) rotate(45deg); }
+.cf-burger.is-close span:last-child { transform: translateY(-3.25px) rotate(-45deg); }
+@media (max-width: 767.98px) {
+  .cf-header__search { order: 3; flex-basis: 100%; max-width: none; }
+  .cf-logo__tag { display: none; }
+}
+
+/* Two columns: side navigation + page */
+.cf-shell { display: flex; align-items: stretch; min-height: calc(100vh - var(--cf-header-h)); }
+.cf-shell__main { flex: 1 1 auto; min-width: 0; }
+
+/* Side navigation (a list of links in two groups) */
+.cf-side {
+  flex: 0 0 var(--cf-side-w);
+  width: var(--cf-side-w);
+  background: var(--cf-surface);
+  border-right: 1px solid var(--cf-line);
+}
+.cf-side__inner {
+  position: sticky;
+  top: var(--cf-header-h);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-height: calc(100vh - var(--cf-header-h));
+  overflow-y: auto;
+  padding: 1.5rem 1rem;
+}
+.cf-side__group { display: flex; flex-direction: column; gap: 0.15rem; }
+.cf-side__title { margin: 0; padding: 0 0.75rem 0.5rem; font-family: var(--cf-font-ui); line-height: 1.4; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cf-muted); }
+.cf-side__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.15rem; }
+.cf-side__link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 44px;
+  padding: 0 0.75rem;
+  border-radius: var(--cf-r-xs);
+  color: var(--cf-text);
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: background-color var(--cf-fast) ease, color var(--cf-fast) ease;
+}
+.cf-side__link svg { color: var(--cf-muted); flex-shrink: 0; transition: color var(--cf-fast) ease; }
+.cf-side__link:hover { background: var(--cf-surface-2); color: var(--cf-text); }
+.cf-side__link.active,
+.cf-side__link[aria-current="page"] { background: var(--cf-maroon-tint); color: var(--cf-maroon); font-weight: 600; }
+.cf-side__link.active svg,
+.cf-side__link[aria-current="page"] svg { color: var(--cf-maroon); }
+.cf-side__rule { height: 1px; margin: 0 0.75rem; background: var(--cf-line); }
+.cf-side__note {
+  margin-top: auto;
+  padding: 1rem 1.1rem;
+  border-radius: var(--cf-r-sm);
+  background: var(--cf-sage);
+  color: #F1EEE6;
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+.cf-side__note strong { display: block; margin-bottom: 0.3rem; font-size: 0.88rem; }
+.cf-side__note span { color: #D9E0D6; }
+
+/* Static pages: the side navigation is a Bootstrap "offcanvas-lg", a plain
+   block on large screens and a sliding drawer on small ones. */
+@media (min-width: 992px) {
+  .cf-side__drawer { height: 100%; }
+}
+@media (max-width: 991.98px) {
+  .cf-side:has(.cf-side__drawer) { flex-basis: 0; width: 0; border: 0; } /* the drawer is position: fixed, so it still shows */
+  .cf-side__drawer { --bs-offcanvas-width: min(340px, 88vw); --bs-offcanvas-bg: var(--cf-surface); color: var(--cf-text); }
+  .cf-side__drawer .offcanvas-header { border-bottom: 1px solid var(--cf-line); }
+  .cf-side__drawer .cf-side__inner { position: static; max-height: none; flex: 1; }
+}
+[data-theme="dark"] .cf-side__drawer .btn-close { filter: invert(1) grayscale(1) brightness(2); }
+main:focus { outline: none; } /* focused by the skip link; no ring around the whole page */
+.cf-shell__main .container-xl { max-width: 1240px; padding-inline: clamp(16px, 3vw, 40px); }
+
+/* Dark footer */
+.cf-footer { padding: 2.75rem 0 1.5rem; background: var(--cf-ink); color: var(--cf-on-ink-muted); }
+.cf-footer .cf-wordmark,
+.cf-footer .cf-wordmark:hover { color: #FFFFFF; }
+.cf-footer .cf-label { color: var(--cf-on-ink); }
+.cf-footer a { color: var(--cf-on-ink); }
+.cf-footer a:hover { color: #FFFFFF; }
+.cf-footer :focus-visible { outline-color: #FFFFFF; }
+.cf-footer__links { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; font-size: 0.9rem; }
+.cf-footer__bottom {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem 1.5rem;
+  margin-top: 2.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--cf-ink-line);
+  font-size: 0.82rem;
+}
+
+/* Page heading with a breadcrumb */
+.cf-crumbs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0 0 0.6rem; padding: 0; list-style: none; font-size: 0.82rem; color: var(--cf-muted); }
+.cf-crumbs li + li::before { content: "/"; margin-right: 0.4rem; color: var(--cf-line-strong); }
+.cf-crumbs a { color: var(--cf-muted); text-decoration: none; }
+.cf-crumbs a:hover { color: var(--cf-maroon); text-decoration: underline; }
+
+/* Modal */
+.modal { --bs-modal-bg: var(--cf-surface); --bs-modal-color: var(--cf-text); --bs-modal-border-color: var(--cf-line); --bs-modal-border-radius: var(--cf-r-lg); --bs-modal-padding: 1.5rem; }
+.modal-content { box-shadow: var(--cf-shadow-lg); }
+.modal-header, .modal-footer { border-color: var(--cf-line); }
+.modal-backdrop { --bs-backdrop-bg: #2A211B; --bs-backdrop-opacity: 0.45; }
+.modal.fade .modal-dialog { transform: translateY(16px); transition: transform var(--cf-med) var(--cf-ease); }
+.modal.show .modal-dialog { transform: none; }
+[data-theme="dark"] .btn-close { filter: invert(1) grayscale(1) brightness(2); }
+
+/* Tables (admin lists) */
+.table {
+  --bs-table-bg: transparent;
+  --bs-table-color: var(--cf-text);
+  --bs-table-border-color: var(--cf-line);
+  --bs-table-hover-bg: color-mix(in srgb, var(--cf-text) 4%, transparent);
+  --bs-table-hover-color: var(--cf-text);
+  --bs-table-striped-bg: color-mix(in srgb, var(--cf-text) 3%, transparent);
+  --bs-table-striped-color: var(--cf-text);
+  font-size: 0.9rem;
+}
+.table thead th { font-size: 0.75rem; font-weight: 600; color: var(--cf-muted); }
+
+
+/* --------------------------------------------------------------------------
+   4. LAYOUT HELPERS
+   -------------------------------------------------------------------------- */
+.cf-section { padding-block: clamp(3.5rem, 7vw, 6rem); }
+.cf-section--tight { padding-block: clamp(2rem, 4vw, 3rem); }
+
+/* Large rounded panel (forms, summaries) */
+.cf-panel {
+  background: var(--cf-surface);
+  border: 1px solid var(--cf-line);
+  border-radius: var(--cf-r-lg);
+  padding: clamp(1.25rem, 3vw, 2.25rem);
+  box-shadow: var(--cf-shadow);
+}
+
+/* Service tile: a big link with a tinted icon ("What would you like to do?") */
+.cf-tile {
+  --tile-bg: var(--cf-maroon-tint);
+  --tile-fg: var(--cf-maroon);
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  height: 100%;
+  padding: 1.35rem;
+  background: var(--cf-surface);
+  border: 1px solid var(--cf-line);
+  border-radius: var(--cf-r);
+  color: var(--cf-text);
+  text-decoration: none;
+  transition: border-color var(--cf-fast) ease, box-shadow var(--cf-med) var(--cf-ease), transform var(--cf-med) var(--cf-ease);
+}
+.cf-tile:hover { color: var(--cf-text); border-color: var(--cf-line-strong); box-shadow: var(--cf-shadow-lg); transform: translateY(-3px); }
+.cf-tile__icon { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 10px; background: var(--tile-bg); color: var(--tile-fg); }
+.cf-tile__title { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; font-weight: 600; font-size: 1rem; }
+.cf-tile__title svg { color: var(--cf-muted); transition: transform var(--cf-med) var(--cf-ease), color var(--cf-fast) ease; }
+.cf-tile:hover .cf-tile__title svg { color: var(--tile-fg); transform: translateX(3px); }
+.cf-tile__text { font-size: 0.85rem; line-height: 1.5; color: var(--cf-muted); }
+.cf-tile--sage { --tile-bg: var(--cf-sage-tint); --tile-fg: var(--cf-sage-mid); }
+.cf-tile--blue { --tile-bg: var(--cf-blue-tint); --tile-fg: var(--cf-blue); }
+.cf-tile--amber { --tile-bg: var(--cf-amber-tint); --tile-fg: var(--cf-amber); }
+
+/* Small green "pill" above a heading ("Public service platform") */
+.cf-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: var(--cf-r-pill);
+  background: var(--cf-sage-tint);
+  color: var(--cf-sage-mid);
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+/* Tick list ("No account needed") */
+.cf-ticks { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem 1.4rem; font-size: 0.85rem; color: var(--cf-muted); }
+.cf-ticks li { display: inline-flex; align-items: center; gap: 0.4rem; }
+.cf-ticks svg { color: var(--cf-sage-mid); }
+
+/* Deep green banner ("Together for Cleaner, Safer Communities") */
+.cf-banner {
+  position: relative;
+  overflow: hidden;
+  background: var(--cf-sage);
+  color: #F8F2E7;
+  border-radius: var(--cf-r-lg);
+  padding: clamp(2rem, 5vw, 3.5rem);
+}
+.cf-banner h2 { color: #F8F2E7; }
+.cf-banner p { color: rgba(248, 242, 231, 0.82); }
+
+/* "‹ Back to Home" link at the top of inner pages */
+.cf-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  color: var(--cf-muted);
+  text-decoration: none;
+}
+.cf-back:hover { color: var(--cf-maroon); }
+.cf-back span { transition: transform var(--cf-med) var(--cf-ease); }
+.cf-back:hover span { transform: translateX(-3px); }
+
+
+/* --------------------------------------------------------------------------
+   5. BUTTONS AND LINKS
+   -------------------------------------------------------------------------- */
+.btn {
+  --bs-btn-padding-x: 1.35rem;
+  --bs-btn-padding-y: 0.7rem;
+  --bs-btn-font-weight: 500;
+  --bs-btn-font-size: 0.95rem;
+  --bs-btn-border-radius: var(--cf-r-xs);
+  --bs-btn-focus-box-shadow: 0 0 0 4px color-mix(in srgb, var(--cf-focus) 25%, transparent);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition:
+    transform var(--cf-med) var(--cf-ease),
+    background-color var(--cf-fast) ease,
+    color var(--cf-fast) ease,
+    border-color var(--cf-fast) ease,
+    box-shadow var(--cf-med) var(--cf-ease);
+}
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: translateY(1px) scale(0.98); transition-duration: 0.1s; }
+.btn-lg { --bs-btn-padding-x: 1.75rem; --bs-btn-padding-y: 0.85rem; --bs-btn-font-size: 1rem; }
+.btn-sm { --bs-btn-padding-x: 1rem; --bs-btn-padding-y: 0.45rem; --bs-btn-font-size: 0.85rem; }
+
+/* Maroon: the main action ("Report an Issue", "Next", "Submit") */
+.btn-primary {
+  --bs-btn-bg: var(--cf-maroon);
+  --bs-btn-color: var(--cf-on-primary);
+  --bs-btn-border-color: var(--cf-maroon);
+  --bs-btn-hover-bg: var(--cf-maroon-hover);
+  --bs-btn-hover-color: var(--cf-on-primary);
+  --bs-btn-hover-border-color: var(--cf-maroon-hover);
+  --bs-btn-active-bg: var(--cf-maroon-hover);
+  --bs-btn-active-color: var(--cf-on-primary);
+  --bs-btn-active-border-color: var(--cf-maroon-hover);
+  --bs-btn-disabled-bg: var(--cf-maroon);
+  --bs-btn-disabled-color: var(--cf-on-primary);
+  --bs-btn-disabled-border-color: var(--cf-maroon);
+  --bs-btn-font-weight: 600;
+}
+.btn-primary:hover { box-shadow: 0 8px 18px -12px rgba(143, 47, 43, 0.8); }
+
+/* Maroon outline ("Track Complaint", "Return to Home") */
+.btn-outline-primary {
+  --bs-btn-bg: transparent;
+  --bs-btn-color: var(--cf-maroon);
+  --bs-btn-border-color: var(--cf-maroon);
+  --bs-btn-hover-bg: color-mix(in srgb, var(--cf-maroon) 8%, transparent);
+  --bs-btn-hover-color: var(--cf-maroon);
+  --bs-btn-hover-border-color: var(--cf-maroon);
+  --bs-btn-active-bg: color-mix(in srgb, var(--cf-maroon) 14%, transparent);
+  --bs-btn-active-color: var(--cf-maroon);
+  --bs-btn-active-border-color: var(--cf-maroon);
+  --bs-btn-border-width: 1.5px;
+}
+
+/* White button on the green banner */
+.btn-light {
+  --bs-btn-bg: #FFFDF9;
+  --bs-btn-color: #8F2F2B;
+  --bs-btn-border-color: #FFFDF9;
+  --bs-btn-hover-bg: #FFFFFF;
+  --bs-btn-hover-color: #7A2522;
+  --bs-btn-hover-border-color: #FFFFFF;
+  --bs-btn-active-bg: #F1EADE;
+  --bs-btn-active-color: #7A2522;
+  --bs-btn-active-border-color: #F1EADE;
+}
+
+/* Neutral bordered button ("Back", "Copy", "Add Image") */
+.btn-ghost {
+  --bs-btn-bg: var(--cf-surface);
+  --bs-btn-color: var(--cf-text);
+  --bs-btn-border-color: var(--cf-line-strong);
+  --bs-btn-hover-bg: var(--cf-surface);
+  --bs-btn-hover-color: var(--cf-text);
+  --bs-btn-hover-border-color: var(--cf-text);
+  --bs-btn-active-bg: var(--cf-surface-2);
+  --bs-btn-active-color: var(--cf-text);
+  --bs-btn-active-border-color: var(--cf-text);
+}
+
+.btn-success {
+  --bs-btn-bg: var(--cf-success);
+  --bs-btn-border-color: var(--cf-success);
+  --bs-btn-hover-bg: #327A46;
+  --bs-btn-hover-border-color: #327A46;
+  --bs-btn-active-bg: #2A673B;
+  --bs-btn-active-border-color: #2A673B;
+}
+
+.btn-danger {
+  --bs-btn-bg: #9B1C1C;
+  --bs-btn-border-color: #9B1C1C;
+  --bs-btn-hover-bg: #821616;
+  --bs-btn-hover-border-color: #821616;
+  --bs-btn-active-bg: #6E1212;
+  --bs-btn-active-border-color: #6E1212;
+}
+
+/* Arrow inside a button slides on hover */
+.btn .cf-arrow { display: inline-block; transition: transform var(--cf-med) var(--cf-ease); }
+.btn:hover .cf-arrow { transform: translateX(3px); }
+
+/* Round icon button (theme toggle, menu) */
+.cf-icon-btn {
+  --bs-btn-padding-x: 0;
+  --bs-btn-padding-y: 0;
+  width: 40px;
+  height: 40px;
+  --bs-btn-bg: transparent;
+  --bs-btn-color: var(--cf-text);
+  --bs-btn-border-color: var(--cf-line-strong);
+  --bs-btn-hover-bg: var(--cf-surface);
+  --bs-btn-hover-color: var(--cf-text);
+  --bs-btn-hover-border-color: var(--cf-text);
+  --bs-btn-active-bg: var(--cf-surface-2);
+  --bs-btn-active-color: var(--cf-text);
+  border-radius: 50% !important;
+}
+
+/* Ripple: JS adds a <span class="cf-ripple"> at the click point */
+.cf-ripple {
+  position: absolute;
+  z-index: -1;
+  border-radius: 50%;
+  pointer-events: none;
+  background: currentColor;
+  opacity: 0.18;
+  transform: scale(0);
+  animation: cf-ripple 0.6s var(--cf-ease) forwards;
+}
+@keyframes cf-ripple {
+  to { transform: scale(1); opacity: 0; }
+}
+
+/* Text link with an arrow ("View All →") */
+.cf-link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--cf-maroon);
+  font-weight: 500;
+  font-size: 0.92rem;
+  text-decoration: none;
+}
+.cf-link-arrow span { transition: transform var(--cf-med) var(--cf-ease); }
+.cf-link-arrow:hover { color: var(--cf-maroon-hover); }
+.cf-link-arrow:hover span { transform: translateX(4px); }
+
+/* Animated underline link */
+.cf-ulink {
+  position: relative;
+  color: inherit;
+  text-decoration: none;
+}
+.cf-ulink::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform var(--cf-med) var(--cf-ease);
+}
+.cf-ulink:hover { color: inherit; }
+.cf-ulink:hover::after,
+.cf-ulink:focus-visible::after { transform: scaleX(1); transform-origin: left; }
+
+/* Copy button: "Copy" crossfades to "Copied ✓" */
+.cf-copy__idle,
+.cf-copy__done { display: inline-flex; align-items: center; gap: 0.4rem; transition: opacity var(--cf-fast) ease, transform var(--cf-med) var(--cf-ease); }
+.cf-copy__done { position: absolute; inset: 0; justify-content: center; opacity: 0; transform: translateY(60%); }
+.cf-copy.is-copied .cf-copy__idle { opacity: 0; transform: translateY(-60%); }
+.cf-copy.is-copied .cf-copy__done { opacity: 1; transform: none; }
+
+/* Theme toggle icon: a sun that becomes a moon */
+.cf-theme-icon { width: 18px; height: 18px; transition: transform var(--cf-slow) var(--cf-ease); }
+.cf-theme-icon .cf-sun-rays { transform-origin: center; transition: transform var(--cf-slow) var(--cf-ease), opacity var(--cf-med) ease; }
+.cf-theme-icon .cf-moon-mask { transition: transform var(--cf-slow) var(--cf-ease); }
+[data-theme="dark"] .cf-theme-icon { transform: rotate(-40deg); }
+[data-theme="dark"] .cf-theme-icon .cf-sun-rays { opacity: 0; transform: scale(0.4) rotate(45deg); }
+[data-theme="dark"] .cf-theme-icon .cf-moon-mask { transform: translate(-7px, 4px); }
+
+
+/* --------------------------------------------------------------------------
+   6. CARDS AND ISSUE CARDS
+   -------------------------------------------------------------------------- */
+.card,
+.cf-card {
+  --bs-card-bg: var(--cf-surface);
+  --bs-card-color: var(--cf-text);
+  --bs-card-border-color: var(--cf-line);
+  --bs-card-border-radius: var(--cf-r);
+  --bs-card-inner-border-radius: calc(var(--cf-r) - 1px);
+  background: var(--cf-surface);
+  color: var(--cf-text);
+  border: 1px solid var(--cf-line);
+  border-radius: var(--cf-r);
+  box-shadow: var(--cf-shadow);
+}
+.cf-card { position: relative; overflow: hidden; }
+.cf-card__body { padding: 1.1rem 1.25rem 1.25rem; }
+
+/* Hover: the card lifts and its photo zooms slightly */
+.cf-card--hover { transition: transform var(--cf-med) var(--cf-ease), box-shadow var(--cf-med) var(--cf-ease); }
+.cf-card--hover:hover { transform: translateY(-4px); box-shadow: var(--cf-shadow-lg); }
+
+.cf-card__media {
+  position: relative;
+  aspect-ratio: 16 / 8.5;
+  overflow: hidden;
+  background: var(--cf-surface-2);
+}
+.cf-card__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s var(--cf-ease);
+}
+.cf-card--hover:hover .cf-card__media img { transform: scale(1.05); }
+
+/* Round "save" button on a photo (top right, as in the explore list) */
+.cf-card__fav {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 253, 249, 0.85);
+  color: #1F1B17;
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.cf-card__title {
+  font-family: var(--cf-font-ui);
+  font-size: 1.02rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+  margin: 0.65rem 0 0.5rem;
+}
+
+/* Location / time rows with a small icon */
+.cf-meta { list-style: none; margin: 0 0 0.85rem; padding: 0; display: grid; gap: 0.3rem; }
+.cf-meta li { display: flex; align-items: center; gap: 0.45rem; font-size: 0.86rem; color: var(--cf-muted); }
+.cf-meta svg { width: 14px; height: 14px; flex-shrink: 0; }
+.cf-meta .cf-pin { color: var(--cf-maroon); }
+
+
+/* --------------------------------------------------------------------------
+   7. FORMS, CATEGORY CHOICES AND THE STEP INDICATOR
+   -------------------------------------------------------------------------- */
+.form-label { font-size: 0.88rem; font-weight: 600; margin-bottom: 0.4rem; }
+
+.form-control,
+.form-select {
+  background-color: var(--cf-surface);
+  color: var(--cf-text);
+  border: 1px solid var(--cf-line-strong);
+  border-radius: var(--cf-r-xs);
+  padding: 0.65rem 0.9rem;
+  font-size: 0.95rem;
+  transition: border-color var(--cf-fast) ease, box-shadow var(--cf-med) var(--cf-ease);
+}
+.form-control::placeholder { color: var(--cf-muted); opacity: 0.75; }
+.form-control:hover,
+.form-select:hover { border-color: color-mix(in srgb, var(--cf-text) 35%, transparent); }
+.form-control:focus,
+.form-select:focus {
+  background-color: var(--cf-surface);
+  color: var(--cf-text);
+  border-color: var(--cf-focus);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--cf-focus) 15%, transparent);
+}
+.form-control:disabled,
+.form-select:disabled { background-color: var(--cf-surface-2); color: var(--cf-muted); opacity: 0.8; }
+[data-theme="dark"] .form-select {
+  --bs-form-select-bg-img: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23F3EDE4' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+}
+
+/* Search box with a magnifier icon */
+.cf-search { position: relative; }
+.cf-search svg { position: absolute; left: 0.85rem; top: 50%; width: 16px; height: 16px; transform: translateY(-50%); color: var(--cf-muted); pointer-events: none; }
+.cf-search .form-control { padding-left: 2.4rem; }
+
+/* Validation */
+.form-control.is-invalid,
+.form-select.is-invalid { border-color: var(--cf-critical); }
+.form-control.is-invalid:focus,
+.form-select.is-invalid:focus { box-shadow: 0 0 0 4px color-mix(in srgb, var(--cf-critical) 15%, transparent); }
+.form-control.is-valid,
+.form-select.is-valid { border-color: var(--cf-st-resolved); }
+.invalid-feedback,
+.valid-feedback { font-size: 0.82rem; font-weight: 500; }
+.invalid-feedback { animation: cf-fade-down var(--cf-med) var(--cf-ease); }
+
+.cf-shake { animation: cf-shake 0.42s cubic-bezier(0.36, 0.07, 0.19, 0.97); }
+@keyframes cf-shake {
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+@keyframes cf-fade-down {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: none; }
+}
+
+.cf-hint { font-size: 0.8rem; color: var(--cf-muted); display: flex; justify-content: space-between; padding-top: 0.3rem; }
+
+/* Honeypot: hidden from people, visible to naive bots */
+.cf-hp { position: absolute !important; left: -9999px !important; width: 1px; height: 1px; overflow: hidden; }
+
+/* Switch (report anonymously) */
+.form-switch { display: flex; align-items: center; gap: 0.75rem; padding-left: 0; }
+.form-switch .form-check-input {
+  float: none;
+  width: 2.6rem;
+  height: 1.4rem;
+  margin: 0;
+  background-color: var(--cf-surface-2);
+  border: 1px solid var(--cf-line-strong);
+  cursor: pointer;
+  transition: background-position var(--cf-med) var(--cf-ease), background-color var(--cf-fast) ease;
+}
+.form-check-input:checked { background-color: var(--cf-maroon); border-color: var(--cf-maroon); }
+.form-switch .form-check-input:focus { box-shadow: 0 0 0 4px color-mix(in srgb, var(--cf-focus) 15%, transparent); border-color: var(--cf-focus); }
+.form-check-label { cursor: pointer; font-size: 0.92rem; }
+
+/* Segmented picker (severity) */
+.cf-seg { display: inline-flex; flex-wrap: wrap; gap: 0.4rem; }
+.cf-seg input { position: absolute; opacity: 0; pointer-events: none; }
+.cf-seg label {
+  padding: 0.45rem 1rem;
+  border: 1px solid var(--cf-line-strong);
+  border-radius: var(--cf-r-xs);
+  background: var(--cf-surface);
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color var(--cf-fast) ease, color var(--cf-fast) ease, border-color var(--cf-fast) ease;
+}
+.cf-seg label:hover { border-color: var(--cf-text); }
+.cf-seg input:checked + label { background: var(--cf-maroon-tint); border-color: var(--cf-maroon); color: var(--cf-maroon); }
+.cf-seg input:checked + label[data-sev="Critical"] { background: #9B1C1C; border-color: #9B1C1C; color: #fff; }
+.cf-seg input:focus-visible + label { outline: 2px solid var(--cf-focus); outline-offset: 2px; }
+
+/* Category choice card ("Pothole · Damaged roads") with a round icon */
+.cf-choice {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  width: 100%;
+  padding: 1rem 1.1rem;
+  text-align: left;
+  background: var(--cf-surface);
+  color: var(--cf-text);
+  border: 1px solid var(--cf-line);
+  border-radius: var(--cf-r-sm);
+  cursor: pointer;
+  transition: border-color var(--cf-fast) ease, background-color var(--cf-fast) ease, box-shadow var(--cf-med) var(--cf-ease), transform var(--cf-med) var(--cf-ease);
+}
+.cf-choice:hover { border-color: var(--cf-line-strong); box-shadow: var(--cf-shadow); transform: translateY(-2px); }
+.cf-choice__icon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--cf-surface-2);
+  color: var(--cf-sage);
+}
+[data-theme="dark"] .cf-choice__icon { color: var(--cf-sage-mid); }
+.cf-choice__icon svg { width: 22px; height: 22px; }
+.cf-choice__title { display: block; font-weight: 600; font-size: 0.92rem; }
+.cf-choice__hint { display: block; font-size: 0.8rem; color: var(--cf-muted); }
+.cf-choice[aria-pressed="true"],
+.cf-choice.is-selected {
+  background: color-mix(in srgb, var(--cf-maroon-tint) 55%, var(--cf-surface));
+  border-color: var(--cf-maroon);
+  box-shadow: 0 0 0 1px var(--cf-maroon);
+}
+
+/* Step indicator: 1 Category — 2 Details — 3 Location — 4 Review */
+.cf-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  counter-reset: none;
+}
+.cf-steps li {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  color: var(--cf-muted);
+}
+/* The line between two steps */
+.cf-steps li + li::before {
+  content: "";
+  position: absolute;
+  top: 13px;
+  right: 50%;
+  width: 100%;
+  height: 1.5px;
+  background: var(--cf-line-strong);
+  z-index: 0;
+}
+.cf-steps li.is-done + li::before,
+.cf-steps li.is-done + li.is-current::before { background: var(--cf-maroon); }
+.cf-steps__dot {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--cf-surface-2);
+  border: 1px solid var(--cf-line-strong);
+  color: var(--cf-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  transition: background-color var(--cf-med) ease, color var(--cf-med) ease, border-color var(--cf-med) ease;
+}
+.cf-steps li.is-current { color: var(--cf-text); font-weight: 600; }
+.cf-steps li.is-current .cf-steps__dot,
+.cf-steps li.is-done .cf-steps__dot { background: var(--cf-maroon); border-color: var(--cf-maroon); color: #fff; }
+
+
+/* --------------------------------------------------------------------------
+   8. CHIPS AND STATUS BADGES
+   Each chip sets --bg and --fg; the shared rule does the rest.
+   -------------------------------------------------------------------------- */
+.cf-chip {
+  --bg: var(--cf-cat-other-bg);
+  --fg: var(--cf-cat-other);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: var(--cf-r-pill);
+  background: var(--bg);
+  color: var(--fg);
+  font-size: 0.76rem;
+  font-weight: 600;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+/* Categories */
+.cf-chip--roads { --bg: var(--cf-cat-roads-bg); --fg: var(--cf-cat-roads); }
+.cf-chip--waste { --bg: var(--cf-cat-waste-bg); --fg: var(--cf-cat-waste); }
+.cf-chip--light { --bg: var(--cf-cat-light-bg); --fg: var(--cf-cat-light); }
+.cf-chip--drain { --bg: var(--cf-cat-drain-bg); --fg: var(--cf-cat-drain); }
+.cf-chip--other { --bg: var(--cf-cat-other-bg); --fg: var(--cf-cat-other); }
+
+/* Statuses */
+.cf-status { padding: 0.25rem 0.75rem; font-size: 0.8rem; }
+.cf-status--reported { --bg: var(--cf-st-reported-bg); --fg: var(--cf-st-reported); }
+.cf-status--acknowledged { --bg: var(--cf-st-ack-bg); --fg: var(--cf-st-ack); }
+.cf-status--progress { --bg: var(--cf-st-progress-bg); --fg: var(--cf-st-progress); }
+.cf-status--resolved { --bg: var(--cf-st-resolved-bg); --fg: var(--cf-st-resolved); }
+.cf-status--merged { --bg: var(--cf-st-merged-bg); --fg: var(--cf-st-merged); }
+.cf-status--reopened { --bg: var(--cf-st-ack-bg); --fg: var(--cf-st-ack); }
+
+/* Escalated: open for more than 30 days */
+.cf-escalated { --bg: #9B1C1C; --fg: #FFFFFF; }
+[data-theme="dark"] .cf-escalated { --bg: #B83A3A; }
+
+/* Toggle chip used for filters */
+.cf-filter {
+  padding: 0.45rem 0.9rem;
+  border: 1px solid var(--cf-line-strong);
+  border-radius: var(--cf-r-xs);
+  background: var(--cf-surface);
+  color: var(--cf-text);
+  font-size: 0.86rem;
+  cursor: pointer;
+  transition: background-color var(--cf-fast) ease, border-color var(--cf-fast) ease, color var(--cf-fast) ease;
+}
+.cf-filter:hover { border-color: var(--cf-text); }
+.cf-filter[aria-pressed="true"] { background: var(--cf-maroon); border-color: var(--cf-maroon); color: #fff; }
+
+
+/* --------------------------------------------------------------------------
+   9. TOASTS, SKELETON LOADERS, EMPTY STATES, ACCORDION
+   -------------------------------------------------------------------------- */
+.cf-toast-stack {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 1600;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: min(370px, calc(100vw - 32px));
+  pointer-events: none;
+}
+.cf-toast {
+  --c: var(--cf-maroon);
+  position: relative;
+  display: flex;
+  gap: 0.8rem;
+  align-items: flex-start;
+  padding: 0.95rem 1rem 1.05rem;
+  background: var(--cf-surface);
+  color: var(--cf-text);
+  border: 1px solid var(--cf-line);
+  border-radius: var(--cf-r);
+  box-shadow: var(--cf-shadow-lg);
+  overflow: hidden;
+  pointer-events: auto;
+}
+.cf-toast--success { --c: var(--cf-success); }
+.cf-toast--error { --c: #9B1C1C; }
+.cf-toast--info { --c: var(--cf-sage-mid); }
+.cf-toast--warning { --c: #B7791F; }
+.cf-toast__icon {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--c) 15%, transparent);
+  color: var(--c);
+  font-weight: 700;
+}
+.cf-toast__title { font-weight: 600; margin: 0 0 0.1rem; }
+.cf-toast__msg { margin: 0; color: var(--cf-muted); font-size: 0.88rem; line-height: 1.45; }
+.cf-toast__close {
+  margin-left: auto;
+  background: none;
+  border: 0;
+  color: var(--cf-muted);
+  font-size: 1.2rem;
+  line-height: 1;
+  padding: 0.1rem 0.3rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.cf-toast__close:hover { color: var(--cf-text); }
+.cf-toast__timer {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 100%;
+  background: var(--c);
+  transform-origin: left;
+  animation: cf-toast-timer var(--duration, 4s) linear forwards;
+}
+.cf-toast:hover .cf-toast__timer { animation-play-state: paused; }
+@keyframes cf-toast-timer {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
+
+/* Skeleton: grey blocks with a moving shimmer */
+.cf-skel {
+  position: relative;
+  overflow: hidden;
+  background: var(--cf-surface-2);
+  border-radius: var(--cf-r-xs);
+}
+.cf-skel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--cf-surface) 75%, transparent), transparent);
+  transform: translateX(-100%);
+  animation: cf-shimmer 1.4s ease-in-out infinite;
+}
+@keyframes cf-shimmer {
+  to { transform: translateX(100%); }
+}
+.cf-skel--line { height: 0.8rem; margin-bottom: 0.55rem; }
+.cf-skel--title { height: 1.1rem; width: 80%; margin-bottom: 0.8rem; }
+.cf-skel--media { aspect-ratio: 16 / 8.5; border-radius: 0; }
+.cf-skel--chip { height: 1.3rem; width: 4.5rem; margin-bottom: 0.4rem; }
+
+/* Empty and error states */
+.cf-empty {
+  text-align: center;
+  padding: clamp(2rem, 5vw, 3.5rem) 1.5rem;
+  background: var(--cf-bg);
+  border: 1px dashed var(--cf-line-strong);
+  border-radius: var(--cf-r-lg);
+}
+/* Sketches sit on cream paper: "darken" plus a soft edge blends them in. */
+.cf-empty__art {
+  display: block;
+  width: min(260px, 70%);
+  margin: 0 auto 1rem;
+  mix-blend-mode: darken;
+  -webkit-mask-image: radial-gradient(closest-side, #000 65%, transparent 100%);
+  mask-image: radial-gradient(closest-side, #000 65%, transparent 100%);
+}
+[data-theme="dark"] .cf-empty__art { mix-blend-mode: normal; opacity: 0.85; filter: invert(1) hue-rotate(180deg); }
+
+/* Accordion (FAQ). jQuery slides the panels; CSS turns the plus into a cross. */
+.cf-acc { border-top: 1px solid var(--cf-line); }
+.cf-acc__item { border-bottom: 1px solid var(--cf-line); }
+.cf-acc__item h3 { margin: 0; font-size: inherit; font-family: inherit; letter-spacing: 0; }
+.cf-acc__btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  padding: 1.05rem 0.2rem;
+  background: none;
+  border: 0;
+  color: var(--cf-text);
+  text-align: left;
+  font-family: var(--cf-font-display);
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+.cf-acc__icon {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1px solid var(--cf-line-strong);
+  transition: transform var(--cf-med) var(--cf-ease), background-color var(--cf-fast) ease, border-color var(--cf-fast) ease;
+}
+.cf-acc__icon::before,
+.cf-acc__icon::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 10px;
+  height: 1.5px;
+  margin: -0.75px 0 0 -5px;
+  background: currentColor;
+}
+.cf-acc__icon::after { transform: rotate(90deg); }
+.cf-acc__btn:hover .cf-acc__icon { border-color: var(--cf-maroon); color: var(--cf-maroon); }
+.cf-acc__item.is-open .cf-acc__icon { transform: rotate(135deg); background: var(--cf-maroon); border-color: var(--cf-maroon); color: #fff; }
+.cf-acc__panel { padding: 0 0.2rem 1.1rem; color: var(--cf-muted); max-width: 62ch; }
+
+
+/* --------------------------------------------------------------------------
+   10. MOTION UTILITIES
+   -------------------------------------------------------------------------- */
+
+/* Scroll reveal. JS adds .is-in when the element enters the viewport.
+   Only active when <html> has the "js" class, so content never stays
+   hidden if JavaScript fails. --i (set by JS) staggers siblings. */
+.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity var(--cf-slow) var(--cf-ease), transform var(--cf-slow) var(--cf-ease);
+  transition-delay: calc(var(--i, 0) * 90ms);
+}
+.js [data-reveal="left"] { transform: translateX(-28px); }
+.js [data-reveal="right"] { transform: translateX(28px); }
+.js [data-reveal="scale"] { transform: scale(0.96); }
+.js [data-reveal="fade"] { transform: none; }
+.js [data-reveal].is-in { opacity: 1; transform: none; }
+
+/* Added for one frame by CivicUI.replay() so an animation restarts from zero */
+.cf-reset,
+.cf-reset * { transition: none !important; }
+
+/* Typewriter. The invisible "ghost" copy reserves the final size so the
+   layout never jumps while letters are typed into the visible layer. */
+.cf-type { display: inline-grid; }
+.cf-type > * { grid-area: 1 / 1; }
+.cf-type__ghost { visibility: hidden; }
+.cf-caret {
+  display: inline-block;
+  width: 2px;
+  height: 0.85em;
+  margin-left: 0.06em;
+  vertical-align: -0.04em;
+  background: var(--cf-maroon);
+  animation: cf-blink 1s steps(1) infinite;
+}
+.is-typing .cf-caret { animation: none; }
+.cf-type.is-done .cf-caret { visibility: hidden; }
+@keyframes cf-blink {
+  50% { opacity: 0; }
+}
+
+/* Big number (counted up by jQuery) */
+.cf-stat__num {
+  font-family: var(--cf-font-display);
+  font-size: clamp(1.6rem, 2.6vw, 2.1rem);
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Ring chart (CSS only). --value is 0-100. The registered property lets the
+   browser animate the number, so the ring fills when .is-in is added. */
+@property --cf-ring {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+.cf-ring-wrap { position: relative; width: var(--size, 160px); aspect-ratio: 1; }
+.cf-ring {
+  --cf-ring: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: conic-gradient(var(--ring-color, var(--cf-sage-mid)) calc(var(--cf-ring) * 1%), var(--cf-surface-2) 0);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - var(--thick, 14px)), #000 calc(100% - var(--thick, 14px) + 1px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - var(--thick, 14px)), #000 calc(100% - var(--thick, 14px) + 1px));
+  transition: --cf-ring 1.6s var(--cf-ease);
+}
+.is-in .cf-ring,
+.cf-ring.is-in,
+html:not(.js) .cf-ring { --cf-ring: var(--value); }
+.cf-ring__label { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; }
+.cf-ring__num { font-family: var(--cf-font-display); font-size: 2rem; line-height: 1; }
+
+/* Bar chart (CSS only). The fill scales from 0 to --value / 100. */
+.cf-bars { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.85rem; }
+.cf-bar__head { display: flex; justify-content: space-between; font-size: 0.88rem; margin-bottom: 0.3rem; }
+.cf-bar__track { height: 8px; border-radius: var(--cf-r-pill); background: var(--cf-surface-2); overflow: hidden; }
+.cf-bar__fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--bar-color, var(--cf-maroon));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 1.2s var(--cf-ease);
+  transition-delay: calc(var(--i, 0) * 100ms);
+}
+.is-in .cf-bar__fill,
+html:not(.js) .cf-bar__fill { transform: scaleX(calc(var(--value) / 100)); }
+
+/* Scroll-depth progress bar (JS sets the scaleX) */
+.cf-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1400;
+  height: 2px;
+  background: var(--cf-maroon);
+  transform: scaleX(0);
+  transform-origin: left;
+  pointer-events: none;
+}
+
+/* Animated success checkmark */
+.cf-check { width: 64px; height: 64px; }
+.cf-check circle { fill: var(--cf-success); transform-origin: center; animation: cf-pop 0.5s var(--cf-ease) both; }
+.cf-check path { stroke: #fff; stroke-width: 5; fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 50; stroke-dashoffset: 50; animation: cf-draw 0.45s 0.35s var(--cf-ease) forwards; }
+@keyframes cf-pop {
+  from { transform: scale(0.4); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+@keyframes cf-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+/* Gentle floating (hero card) and pulsing (map pins) */
+.cf-float { animation: cf-float 6s ease-in-out infinite; }
+@keyframes cf-float {
+  50% { transform: translateY(-8px); }
+}
+.cf-pulse { transform-box: fill-box; transform-origin: center; animation: cf-pulse 2.2s ease-out infinite; }
+@keyframes cf-pulse {
+  from { transform: scale(0.6); opacity: 0.8; }
+  to { transform: scale(2.4); opacity: 0; }
+}
+
+
+/* --------------------------------------------------------------------------
+   11. REDUCED MOTION
+   People who ask their OS for less motion get instant, still states.
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+  }
+
+  .js [data-reveal] { opacity: 1; transform: none; }
+  .cf-caret { animation: none; }
+}

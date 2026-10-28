@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About CivicFix</title>
+  <meta name="description" content="Why CivicFix exists, what it tracks and how it turns many reports into one strong issue.">
+  <script>
+    (function () {
+      var root = document.documentElement, theme = null;
+      root.classList.add('js');
+      try { theme = localStorage.getItem('cf-theme'); } catch (e) { theme = null; }
+      root.setAttribute('data-theme', theme === 'dark' ? 'dark' : 'light');
+      try { var text = localStorage.getItem('cf-text'); if (text === 'sm' || text === 'lg') root.setAttribute('data-text', text); } catch (e) { /* storage blocked */ }
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/civicfix.css" rel="stylesheet">
+  <link href="css/pages.css" rel="stylesheet">
+</head>
+<body>
+  <div class="cf-progress" aria-hidden="true"></div>
+
+  <!-- Accessibility bar: skip link, text size and theme -->
+  <div class="cf-utility">
+    <a href="#main">Skip to main content</a>
+    <div class="cf-utility__tools">
+      <span class="cf-utility__label" id="text-size-label">Text size</span>
+      <div class="d-flex gap-1" role="group" aria-labelledby="text-size-label">
+        <button class="cf-utility__btn" type="button" data-text-size="sm" aria-pressed="false" aria-label="Smaller text">A&minus;</button>
+        <button class="cf-utility__btn" type="button" data-text-size="md" aria-pressed="true" aria-label="Normal text">A</button>
+        <button class="cf-utility__btn" type="button" data-text-size="lg" aria-pressed="false" aria-label="Larger text">A+</button>
+      </div>
+      <span class="cf-utility__sep" aria-hidden="true"></span>
+      <button class="cf-utility__btn" type="button" data-theme-toggle aria-pressed="false" aria-label="Switch to dark mode">
+          <svg class="cf-theme-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <mask id="cf-moon-mask">
+              <rect width="24" height="24" fill="#fff" />
+              <circle class="cf-moon-mask" cx="24" cy="4" r="7" fill="#000" />
+            </mask>
+            <circle cx="12" cy="12" r="5.5" fill="currentColor" mask="url(#cf-moon-mask)" />
+            <g class="cf-sun-rays" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M12 1.5v2.2M12 20.3v2.2M1.5 12h2.2M20.3 12h2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6" />
+            </g>
+          </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Header: logo, search (opens Explore in the React app) and the two main actions -->
+  <header class="cf-header">
+    <a class="cf-logo" href="http://localhost:5173/">
+      <span class="cf-logo__mark"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21Z" /><path d="m9 9.5 2 2 4-4" /></svg></span>
+      <span class="cf-logo__text"><span class="cf-logo__name">CivicFix</span><span class="cf-logo__tag">Civic Issue Reporting and Tracking</span></span>
+    </a>
+    <form class="cf-search cf-header__search" role="search" action="http://localhost:5173/issues" method="get">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4 4" /></svg>
+      <label class="visually-hidden" for="header-search">Search complaints</label>
+      <input id="header-search" class="form-control" type="search" name="q" placeholder="Search complaints, areas or keywords">
+    </form>
+    <div class="cf-header__actions">
+      <a class="btn btn-ghost d-none d-md-inline-flex" href="http://localhost:5173/track">Track Complaint</a>
+      <a class="btn btn-primary d-none d-sm-inline-flex" href="http://localhost:5173/report"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg> Report an Issue</a>
+      <button class="cf-burger d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#side-nav" aria-controls="side-nav" aria-label="Open menu"><span></span><span></span></button>
+    </div>
+  </header>
+
+  <div class="cf-shell">
+    <!-- Side navigation (lists of links). Bootstrap "offcanvas-lg": a normal
+         sidebar on large screens, a drawer that slides in on small ones. -->
+    <aside class="cf-side">
+      <div class="offcanvas-lg offcanvas-start cf-side__drawer" id="side-nav" tabindex="-1" aria-label="Site menu">
+        <div class="offcanvas-header">
+          <span class="cf-logo__name">CivicFix</span>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#side-nav" aria-label="Close menu"></button>
+        </div>
+        <nav class="cf-side__inner" aria-label="Services">
+        <div class="cf-side__group">
+          <h2 class="cf-side__title" id="side-0">Citizen services</h2>
+          <ul class="cf-side__list" aria-labelledby="side-0">
+            <li><a class="cf-side__link" href="http://localhost:5173/"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 11 9-7 9 7" /><path d="M5 10v10h14V10" /></svg> Home</a></li>
+            <li><a class="cf-side__link" href="http://localhost:5173/report"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9Z" /><path d="M14 3v6h6M12 12v6M9 15h6" /></svg> Report an Issue</a></li>
+            <li><a class="cf-side__link" href="http://localhost:5173/track"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="2.5" /><circle cx="18" cy="18" r="2.5" /><path d="M8.5 6H15a3 3 0 0 1 0 6H9a3 3 0 0 0 0 6h6.5" /></svg> Track Complaint</a></li>
+            <li><a class="cf-side__link" href="http://localhost:5173/issues"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2Z" /><path d="M9 4v14m6-12v14" /></svg> Explore Issues</a></li>
+          </ul>
+        </div>
+
+        <div class="cf-side__group">
+          <div class="cf-side__rule mb-3" aria-hidden="true"></div>
+          <h2 class="cf-side__title" id="side-1">Information</h2>
+          <ul class="cf-side__list" aria-labelledby="side-1">
+            <li><a class="cf-side__link" href="http://localhost:5173/impact"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" /></svg> Impact</a></li>
+            <li><a class="cf-side__link" href="how-it-works.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17h.01" /></svg> How It Works</a></li>
+            <li><a class="cf-side__link" href="about.html" aria-current="page"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 11v6M12 7.5h.01" /></svg> About</a></li>
+            <li><a class="cf-side__link" href="contact.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg> Contact</a></li>
+            <li><a class="cf-side__link" href="style-guide.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20c3 0 5-1.5 5-4a3 3 0 0 0-3-3c-2 0-3 1.5-3 3.5 0 1.5-.5 2.5-1 3.5Z" /><path d="m9 13 10-10 2 2-10 10" /></svg> Style guide</a></li>
+          </ul>
+        </div>
+
+        <p class="cf-side__note mb-0"><strong>Is it an emergency?</strong><span>For fire, accidents or danger to life, call 112 first. Then report it here.</span></p>
+        </nav>
+      </div>
+    </aside>
+
+    <div class="cf-shell__main">
+  <main id="main" tabindex="-1">
+    <section class="sp-hero">
+      <img class="sp-hero__art" src="images/03-architectural-line-art.png" alt="">
+      <div class="container-xl">
+        <p class="cf-label mb-2">About us</p>
+        <h1 class="cf-display mb-3" data-reveal>About CivicFix</h1>
+        <p class="cf-lead" data-reveal>Every street has a pothole someone has complained about three times. CivicFix makes those complaints public, counts the days they are ignored, and keeps them on the record until they are fixed.</p>
+      </div>
+    </section>
+
+    <div class="container-xl cf-section">
+      <div class="row g-5">
+        <!-- Sticky table of contents -->
+        <aside class="col-lg-3 d-none d-lg-block">
+          <nav class="sp-toc" aria-label="On this page">
+            <p class="cf-label mb-2">On this page</p>
+            <ul>
+              <li><a href="#mission">Our mission</a></li>
+              <li><a href="#values">What we believe</a></li>
+              <li><a href="#tracks">What we track</a></li>
+              <li><a href="#watch">Watch: CivicFix in 6 seconds</a></li>
+              <li><a href="#journey">Our journey</a></li>
+            </ul>
+          </nav>
+        </aside>
+
+        <div class="col-lg-9">
+          <section id="mission" class="sp-box" aria-labelledby="mission-title" data-reveal>
+            <h2 id="mission-title" class="cf-h2">Our mission</h2>
+            <p>Civic problems rarely go unnoticed; they go <em>unrecorded</em>. A phone call to the ward office leaves no trace, and the next caller starts from zero. CivicFix gives every problem a public ID, a photo, a map pin and a clock that keeps counting.</p>
+            <p class="mb-0">When many residents report the same thing, we do not create a pile of duplicates. We turn them into <strong>one strong issue</strong> that shows how many people are affected, which pushes it up the priority list.</p>
+            <p class="mt-3 mb-0"><button type="button" class="btn btn-ghost btn-sm" id="read-more" aria-expanded="false" aria-controls="mission-more">Read more</button></p>
+            <div id="mission-more" class="mt-3" style="display:none">
+              <p class="mb-0 cf-muted">CivicFix is a college Web Technology project. It is built only with HTML, CSS, Bootstrap, JavaScript, JSON, jQuery, React, Node.js, Express and MongoDB, and every part of it is explained in the project's viva cheat-sheet.</p>
+            </div>
+          </section>
+
+          <section id="values" aria-labelledby="values-title" class="mb-5">
+            <h2 id="values-title" class="cf-h2 mb-1">What we believe</h2>
+            <p class="cf-muted">Click a card to read more.</p>
+            <div class="row g-3" data-stagger>
+              <div class="col-md-4" data-reveal>
+                <article class="sp-box sp-value h-100" tabindex="0" role="button" aria-expanded="false">
+                  <span class="sp-value__icon" style="background:var(--cf-maroon-tint);color:var(--cf-maroon)" aria-hidden="true">◎</span>
+                  <h3 class="cf-h4">Public by default</h3>
+                  <p class="m-0 cf-muted">Anyone can see an issue and its full history.</p>
+                  <p class="sp-value__more">No logins to read anything. Officials see the same timeline the public sees, which keeps everyone honest.</p>
+                </article>
+              </div>
+              <div class="col-md-4" data-reveal>
+                <article class="sp-box sp-value h-100" tabindex="0" role="button" aria-expanded="false">
+                  <span class="sp-value__icon" style="background:var(--cf-sage-tint);color:var(--cf-sage-mid)" aria-hidden="true">⧉</span>
+                  <h3 class="cf-h4">One issue, many voices</h3>
+                  <p class="m-0 cf-muted">Duplicates become support, not noise.</p>
+                  <p class="sp-value__more">Before you submit, we show similar issues within 150 metres. "Add my support" makes the existing report stronger.</p>
+                </article>
+              </div>
+              <div class="col-md-4" data-reveal>
+                <article class="sp-box sp-value h-100" tabindex="0" role="button" aria-expanded="false">
+                  <span class="sp-value__icon" style="background:var(--cf-maroon-tint);color:var(--cf-maroon)" aria-hidden="true">◷</span>
+                  <h3 class="cf-h4">Time matters</h3>
+                  <p class="m-0 cf-muted">Every open issue shows its days ignored.</p>
+                  <p class="sp-value__more">After 30 days an issue is marked Escalated. If a "fixed" issue isn't really fixed, three residents can reopen it.</p>
+                </article>
+              </div>
+            </div>
+          </section>
+
+          <section id="tracks" class="sp-box" aria-labelledby="tracks-title" data-reveal>
+            <h2 id="tracks-title" class="cf-h2">What we track</h2>
+            <div class="table-responsive">
+              <table class="table align-middle mb-0">
+                <caption class="cf-small">Issue categories, typical examples and who usually fixes them.</caption>
+                <thead>
+                  <tr><th scope="col">Category</th><th scope="col">Examples</th><th scope="col">Usually handled by</th></tr>
+                </thead>
+                <tbody>
+                  <tr><th scope="row"><span class="cf-chip cf-chip--roads">Roads</span></th><td>Potholes, cave-ins, open manholes, broken dividers</td><td>Public Works Department</td></tr>
+                  <tr><th scope="row"><span class="cf-chip cf-chip--waste">Waste</span></th><td>Overflowing bins, illegal dumping, garbage burning</td><td>Municipal solid waste team</td></tr>
+                  <tr><th scope="row"><span class="cf-chip cf-chip--light">Streetlight</span></th><td>Lights off, flickering, broken poles</td><td>Electrical wing</td></tr>
+                  <tr><th scope="row"><span class="cf-chip cf-chip--drain">Water &amp; drainage</span></th><td>Burst pipes, sewage overflow, waterlogging</td><td>Water supply &amp; sewerage board</td></tr>
+                  <tr><th scope="row"><span class="cf-chip cf-chip--other">Other</span></th><td>Stray animals, fallen trees, broken benches</td><td>Ward office</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section id="watch" class="mb-5" aria-labelledby="watch-title" data-reveal>
+            <h2 id="watch-title" class="cf-h2">Watch: CivicFix in 6 seconds</h2>
+            <p class="cf-muted">Red pins are reported problems; they turn green when the city fixes them.</p>
+            <video class="sp-video" controls preload="metadata" poster="images/07-pale-city-map-texture.png" width="960" height="540">
+              <source src="media/civicfix-intro.webm" type="video/webm">
+              <track kind="captions" src="media/civicfix-intro.vtt" srclang="en" label="English" default>
+              Your browser cannot play this video. <a href="media/civicfix-intro.webm">Download it</a> instead.
+            </video>
+          </section>
+
+          <section id="journey" class="sp-box" aria-labelledby="journey-title" data-reveal>
+            <h2 id="journey-title" class="cf-h2">Our journey</h2>
+            <ol class="mb-0">
+              <li class="mb-2"><strong>The idea:</strong> one street, five complaints about the same pothole, none of them recorded.</li>
+              <li class="mb-2"><strong>The design:</strong> a calm, paper-like interface that anyone can use in under a minute.</li>
+              <li class="mb-2"><strong>The rules:</strong> one vote per person, duplicates merged, nothing hidden without three flags.</li>
+              <li><strong>Today:</strong> reports from 10 states, tracked publicly until they are fixed.</li>
+            </ol>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+    </div>
+  </div>
+
+  <footer class="cf-footer">
+    <div class="container-xl">
+      <div class="row g-4">
+        <div class="col-lg-5">
+          <a class="cf-wordmark" href="http://localhost:5173/">CivicFix</a>
+          <p class="cf-small mt-2 mb-0" style="max-width: 34ch">Report civic issues in your locality and follow them until they are fixed.</p>
+        </div>
+        <div class="col-6 col-lg-3">
+          <p class="cf-label mb-3">Citizens</p>
+          <ul class="cf-footer__links">
+            <li><a class="cf-ulink" href="http://localhost:5173/report">Report an Issue</a></li>
+            <li><a class="cf-ulink" href="http://localhost:5173/track">Track Complaint</a></li>
+            <li><a class="cf-ulink" href="http://localhost:5173/issues">Explore Issues</a></li>
+            <li><a class="cf-ulink" href="http://localhost:5173/impact">Impact</a></li>
+          </ul>
+        </div>
+        <div class="col-6 col-lg-3">
+          <p class="cf-label mb-3">CivicFix</p>
+          <ul class="cf-footer__links">
+            <li><a class="cf-ulink" href="how-it-works.html">How It Works</a></li>
+            <li><a class="cf-ulink" href="about.html">About</a></li>
+            <li><a class="cf-ulink" href="contact.html">Contact</a></li>
+            <li><a class="cf-ulink" href="http://localhost:5173/admin">Admin</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="cf-footer__bottom">
+        <span>&copy; 2026 CivicFix &middot; A Web Technology college project</span>
+        <span class="cf-mono" data-clock>IST --:--</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/civicfix-ui.js"></script>
+  <script src="js/civicfix-jquery.js"></script>
+  <script src="js/site.js"></script>
+  <script>
+    // Module 3 (jQuery): selectors, traversal, manipulators and effects.
+    $(function () {
+      // "Read more": slideToggle the hidden paragraph and update the button.
+      $('#read-more').on('click', function () {
+        var $btn = $(this);
+        var open = $btn.attr('aria-expanded') === 'true';
+        $('#mission-more').stop(true, true).slideToggle(300);
+        $btn.attr('aria-expanded', String(!open)).text(open ? 'Read more' : 'Show less');
+      });
+
+      // Value cards: click (or Enter/Space) shows the extra line with fadeIn;
+      // the other cards' extra lines fade out (traversal with .closest / .find).
+      function toggleValue($card) {
+        var $more = $card.find('.sp-value__more');
+        var opening = !$more.is(':visible');
+        $('.sp-value').not($card).attr('aria-expanded', 'false').find('.sp-value__more').fadeOut(200);
+        $card.attr('aria-expanded', String(opening));
+        if (opening) $more.fadeIn(300); else $more.fadeOut(200);
+      }
+      $('.sp-value').on('click', function () { toggleValue($(this)); })
+        .on('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleValue($(this)); }
+        });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "name": "civicfix-server",
+  "version": "1.0.0",
+  "description": "CivicFix REST API - Node.js, Express and MongoDB (Mongoose)",
+  "main": "server.js",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "seed": "node seed.js"
+  },
+  "engines": {
+    "node": ">=20.12"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "mongoose": "^8.18.0"
+  }
+}

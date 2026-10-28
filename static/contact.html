@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact CivicFix</title>
+  <meta name="description" content="Get in touch with the CivicFix team.">
+  <script>
+    (function () {
+      var root = document.documentElement, theme = null;
+      root.classList.add('js');
+      try { theme = localStorage.getItem('cf-theme'); } catch (e) { theme = null; }
+      root.setAttribute('data-theme', theme === 'dark' ? 'dark' : 'light');
+      try { var text = localStorage.getItem('cf-text'); if (text === 'sm' || text === 'lg') root.setAttribute('data-text', text); } catch (e) { /* storage blocked */ }
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/civicfix.css" rel="stylesheet">
+  <link href="css/pages.css" rel="stylesheet">
+</head>
+<body>
+  <div class="cf-progress" aria-hidden="true"></div>
+
+  <!-- Accessibility bar: skip link, text size and theme -->
+  <div class="cf-utility">
+    <a href="#main">Skip to main content</a>
+    <div class="cf-utility__tools">
+      <span class="cf-utility__label" id="text-size-label">Text size</span>
+      <div class="d-flex gap-1" role="group" aria-labelledby="text-size-label">
+        <button class="cf-utility__btn" type="button" data-text-size="sm" aria-pressed="false" aria-label="Smaller text">A&minus;</button>
+        <button class="cf-utility__btn" type="button" data-text-size="md" aria-pressed="true" aria-label="Normal text">A</button>
+        <button class="cf-utility__btn" type="button" data-text-size="lg" aria-pressed="false" aria-label="Larger text">A+</button>
+      </div>
+      <span class="cf-utility__sep" aria-hidden="true"></span>
+      <button class="cf-utility__btn" type="button" data-theme-toggle aria-pressed="false" aria-label="Switch to dark mode">
+          <svg class="cf-theme-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <mask id="cf-moon-mask">
+              <rect width="24" height="24" fill="#fff" />
+              <circle class="cf-moon-mask" cx="24" cy="4" r="7" fill="#000" />
+            </mask>
+            <circle cx="12" cy="12" r="5.5" fill="currentColor" mask="url(#cf-moon-mask)" />
+            <g class="cf-sun-rays" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M12 1.5v2.2M12 20.3v2.2M1.5 12h2.2M20.3 12h2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6" />
+            </g>
+          </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Header: logo, search (opens Explore in the React app) and the two main actions -->
+  <header class="cf-header">
+    <a class="cf-logo" href="http://localhost:5173/">
+      <span class="cf-logo__mark"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21Z" /><path d="m9 9.5 2 2 4-4" /></svg></span>
+      <span class="cf-logo__text"><span class="cf-logo__name">CivicFix</span><span class="cf-logo__tag">Civic Issue Reporting and Tracking</span></span>
+    </a>
+    <form class="cf-search cf-header__search" role="search" action="http://localhost:5173/issues" method="get">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4 4" /></svg>
+      <label class="visually-hidden" for="header-search">Search complaints</label>
+      <input id="header-search" class="form-control" type="search" name="q" placeholder="Search complaints, areas or keywords">
+    </form>
+    <div class="cf-header__actions">
+      <a class="btn btn-ghost d-none d-md-inline-flex" href="http://localhost:5173/track">Track Complaint</a>
+      <a class="btn btn-primary d-none d-sm-inline-flex" href="http://localhost:5173/report"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg> Report an Issue</a>
+      <button class="cf-burger d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#side-nav" aria-controls="side-nav" aria-label="Open menu"><span></span><span></span></button>
+    </div>
+  </header>
+
+  <div class="cf-shell">
+    <!-- Side navigation (lists of links). Bootstrap "offcanvas-lg": a normal
+         sidebar on large screens, a drawer that slides in on small ones. -->
+    <aside class="cf-side">
+      <div class="offcanvas-lg offcanvas-start cf-side__drawer" id="side-nav" tabindex="-1" aria-label="Site menu">
+        <div class="offcanvas-header">
+          <span class="cf-logo__name">CivicFix</span>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#side-nav" aria-label="Close menu"></button>
+        </div>
+        <nav class="cf-side__inner" aria-label="Services">
+        <div class="cf-side__group">
+          <h2 class="cf-side__title" id="side-0">Citizen services</h2>
+          <ul class="cf-side__list" aria-labelledby="side-0">
+            <li><a class="cf-side__link" href="http://localhost:5173/"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 11 9-7 9 7" /><path d="M5 10v10h14V10" /></svg> Home</a></li>
+            <li><a class="cf-side__link" href="http://localhost:5173/report"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9Z" /><path d="M14 3v6h6M12 12v6M9 15h6" /></svg> Report an Issue</a></li>
+            <li><a class="cf-side__link" href="http://localhost:5173/track"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="2.5" /><circle cx="18" cy="18" r="2.5" /><path d="M8.5 6H15a3 3 0 0 1 0 6H9a3 3 0 0 0 0 6h6.5" /></svg> Track Complaint</a></li>
+            <li><a class="cf-side__link" href="http://localhost:5173/issues"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2Z" /><path d="M9 4v14m6-12v14" /></svg> Explore Issues</a></li>
+          </ul>
+        </div>
+
+        <div class="cf-side__group">
+          <div class="cf-side__rule mb-3" aria-hidden="true"></div>
+          <h2 class="cf-side__title" id="side-1">Information</h2>
+          <ul class="cf-side__list" aria-labelledby="side-1">
+            <li><a class="cf-side__link" href="http://localhost:5173/impact"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" /></svg> Impact</a></li>
+            <li><a class="cf-side__link" href="how-it-works.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17h.01" /></svg> How It Works</a></li>
+            <li><a class="cf-side__link" href="about.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 11v6M12 7.5h.01" /></svg> About</a></li>
+            <li><a class="cf-side__link" href="contact.html" aria-current="page"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg> Contact</a></li>
+            <li><a class="cf-side__link" href="style-guide.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20c3 0 5-1.5 5-4a3 3 0 0 0-3-3c-2 0-3 1.5-3 3.5 0 1.5-.5 2.5-1 3.5Z" /><path d="m9 13 10-10 2 2-10 10" /></svg> Style guide</a></li>
+          </ul>
+        </div>
+
+        <p class="cf-side__note mb-0"><strong>Is it an emergency?</strong><span>For fire, accidents or danger to life, call 112 first. Then report it here.</span></p>
+        </nav>
+      </div>
+    </aside>
+
+    <div class="cf-shell__main">
+  <main id="main" tabindex="-1">
+    <section class="sp-hero">
+      <img class="sp-hero__art" src="images/02-sage-green-trees.png" alt="">
+      <div class="container-xl">
+        <p class="cf-label mb-2">Contact</p>
+        <h1 class="cf-display mb-3" data-reveal>Get in touch</h1>
+        <p class="cf-lead" data-reveal>Questions, partnership ideas or a problem with the site? Write to us. To report a civic issue, use the <a href="http://localhost:5173/report">report form</a> instead so it gets a tracking ID.</p>
+      </div>
+    </section>
+
+    <div class="container-xl cf-section">
+      <div class="row g-5">
+        <div class="col-lg-7">
+          <form id="contact-form" class="cf-panel" novalidate aria-labelledby="form-title">
+            <h2 id="form-title" class="cf-h3 mb-4">Send us a message</h2>
+
+            <div class="alert alert-success" id="contact-success" role="status"></div>
+
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label" for="c-name">Full name *</label>
+                <input class="form-control" id="c-name" name="name" autocomplete="name" required>
+                <div class="invalid-feedback"></div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="c-email">Email *</label>
+                <input class="form-control" id="c-email" name="email" type="email" autocomplete="email" required>
+                <div class="invalid-feedback"></div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="c-phone">Mobile (optional)</label>
+                <input class="form-control" id="c-phone" name="phone" inputmode="numeric" maxlength="10" placeholder="98765 43210" autocomplete="tel-national">
+                <div class="invalid-feedback"></div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="c-subject">Subject *</label>
+                <select class="form-select" id="c-subject" name="subject" required>
+                  <option value="">Choose a subject</option>
+                  <option>General question</option>
+                  <option>I am a municipal official</option>
+                  <option>Report a bug on the site</option>
+                  <option>Partnership or media</option>
+                </select>
+                <div class="invalid-feedback"></div>
+              </div>
+              <div class="col-12">
+                <label class="form-label" for="c-message">Message *</label>
+                <textarea class="form-control" id="c-message" name="message" rows="5" maxlength="1000" required></textarea>
+                <div class="invalid-feedback"></div>
+                <div class="cf-hint"><span>At least 20 characters</span><span><span id="c-count">0</span> / 1000</span></div>
+              </div>
+              <div class="col-12">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="c-consent" name="consent" required>
+                  <label class="form-check-label" for="c-consent">I agree that CivicFix may reply to me by email.</label>
+                  <div class="invalid-feedback"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Honeypot: hidden from people, simple bots fill it in -->
+            <div class="cf-hp" aria-hidden="true">
+              <label for="c-website">Leave this field empty</label>
+              <input id="c-website" name="website" tabindex="-1" autocomplete="off">
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mt-4">
+              <button class="btn btn-ghost" type="reset">Clear</button>
+              <button class="btn btn-primary" type="submit">Send message <span class="cf-arrow" aria-hidden="true">→</span></button>
+            </div>
+          </form>
+
+          <section class="mt-4" aria-labelledby="sent-title">
+            <h2 id="sent-title" class="cf-h4">Messages sent from this page</h2>
+            <ul class="sp-sent" id="sent-list">
+              <li class="cf-muted" id="sent-empty" style="background:var(--cf-surface-2)">Nothing sent yet.</li>
+            </ul>
+          </section>
+        </div>
+
+        <div class="col-lg-5">
+          <section class="sp-box" aria-labelledby="office-title">
+            <h2 id="office-title" class="cf-h3">Our office</h2>
+            <address class="mb-3">
+              CivicFix Project Lab<br>
+              Department of Computer Science<br>
+              RS Puram, Coimbatore 641002<br>
+              Tamil Nadu, India
+            </address>
+            <iframe class="sp-map" title="Map of the CivicFix office in RS Puram, Coimbatore" loading="lazy"
+              src="https://www.openstreetmap.org/export/embed.html?bbox=76.9458%2C11.0049%2C76.9578%2C11.0129&amp;layer=mapnik&amp;marker=11.0089%2C76.9518"></iframe>
+          </section>
+
+          <section class="sp-box" aria-labelledby="hours-title">
+            <h2 id="hours-title" class="cf-h3">Helplines</h2>
+            <div class="table-responsive">
+              <table class="table mb-0">
+                <thead><tr><th scope="col">For</th><th scope="col">Contact</th><th scope="col">Hours</th></tr></thead>
+                <tbody>
+                  <tr><td>General questions</td><td><a href="mailto:hello@civicfix.example">hello@civicfix.example</a></td><td>Mon–Fri, 10–5</td></tr>
+                  <tr><td>Officials</td><td><a href="mailto:officials@civicfix.example">officials@civicfix.example</a></td><td>Mon–Sat, 9–6</td></tr>
+                  <tr><td>Emergencies</td><td><a href="tel:112">112</a></td><td>24 × 7</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="cf-small cf-muted mt-3 mb-0">CivicFix is not an emergency service. For danger to life, call 112.</p>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+    </div>
+  </div>
+
+  <footer class="cf-footer">
+    <div class="container-xl">
+      <div class="row g-4">
+        <div class="col-lg-5">
+          <a class="cf-wordmark" href="http://localhost:5173/">CivicFix</a>
+          <p class="cf-small mt-2 mb-0" style="max-width: 34ch">Report civic issues in your locality and follow them until they are fixed.</p>
+        </div>
+        <div class="col-6 col-lg-3">
+          <p class="cf-label mb-3">Citizens</p>
+          <ul class="cf-footer__links">
+            <li><a class="cf-ulink" href="http://localhost:5173/report">Report an Issue</a></li>
+            <li><a class="cf-ulink" href="http://localhost:5173/track">Track Complaint</a></li>
+            <li><a class="cf-ulink" href="http://localhost:5173/issues">Explore Issues</a></li>
+            <li><a class="cf-ulink" href="http://localhost:5173/impact">Impact</a></li>
+          </ul>
+        </div>
+        <div class="col-6 col-lg-3">
+          <p class="cf-label mb-3">CivicFix</p>
+          <ul class="cf-footer__links">
+            <li><a class="cf-ulink" href="how-it-works.html">How It Works</a></li>
+            <li><a class="cf-ulink" href="about.html">About</a></li>
+            <li><a class="cf-ulink" href="contact.html">Contact</a></li>
+            <li><a class="cf-ulink" href="http://localhost:5173/admin">Admin</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="cf-footer__bottom">
+        <span>&copy; 2026 CivicFix &middot; A Web Technology college project</span>
+        <span class="cf-mono" data-clock>IST --:--</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/civicfix-ui.js"></script>
+  <script src="js/civicfix-jquery.js"></script>
+  <script src="js/site.js"></script>
+  <script src="js/contact.js"></script>
+</body>
+</html>

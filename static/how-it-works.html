@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How CivicFix Works</title>
+  <meta name="description" content="Report, track and see the change: how a complaint moves through CivicFix.">
+  <script>
+    (function () {
+      var root = document.documentElement, theme = null;
+      root.classList.add('js');
+      try { theme = localStorage.getItem('cf-theme'); } catch (e) { theme = null; }
+      root.setAttribute('data-theme', theme === 'dark' ? 'dark' : 'light');
+      try { var text = localStorage.getItem('cf-text'); if (text === 'sm' || text === 'lg') root.setAttribute('data-text', text); } catch (e) { /* storage blocked */ }
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/civicfix.css" rel="stylesheet">
+  <link href="css/pages.css" rel="stylesheet">
+</head>
+<body>
+  <div class="cf-progress" aria-hidden="true"></div>
+
+  <!-- Accessibility bar: skip link, text size and theme -->
+  <div class="cf-utility">
+    <a href="#main">Skip to main content</a>
+    <div class="cf-utility__tools">
+      <span class="cf-utility__label" id="text-size-label">Text size</span>
+      <div class="d-flex gap-1" role="group" aria-labelledby="text-size-label">
+        <button class="cf-utility__btn" type="button" data-text-size="sm" aria-pressed="false" aria-label="Smaller text">A&minus;</button>
+        <button class="cf-utility__btn" type="button" data-text-size="md" aria-pressed="true" aria-label="Normal text">A</button>
+        <button class="cf-utility__btn" type="button" data-text-size="lg" aria-pressed="false" aria-label="Larger text">A+</button>
+      </div>
+      <span class="cf-utility__sep" aria-hidden="true"></span>
+      <button class="cf-utility__btn" type="button" data-theme-toggle aria-pressed="false" aria-label="Switch to dark mode">
+          <svg class="cf-theme-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <mask id="cf-moon-mask">
+              <rect width="24" height="24" fill="#fff" />
+              <circle class="cf-moon-mask" cx="24" cy="4" r="7" fill="#000" />
+            </mask>
+            <circle cx="12" cy="12" r="5.5" fill="currentColor" mask="url(#cf-moon-mask)" />
+            <g class="cf-sun-rays" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M12 1.5v2.2M12 20.3v2.2M1.5 12h2.2M20.3 12h2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6" />
+            </g>
+          </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Header: logo, search (opens Explore in the React app) and the two main actions -->
+  <header class="cf-header">
+    <a class="cf-logo" href="http://localhost:5173/">
+      <span class="cf-logo__mark"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21Z" /><path d="m9 9.5 2 2 4-4" /></svg></span>
+      <span class="cf-logo__text"><span class="cf-logo__name">CivicFix</span><span class="cf-logo__tag">Civic Issue Reporting and Tracking</span></span>
+    </a>
+    <form class="cf-search cf-header__search" role="search" action="http://localhost:5173/issues" method="get">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4 4" /></svg>
+      <label class="visually-hidden" for="header-search">Search complaints</label>
+      <input id="header-search" class="form-control" type="search" name="q" placeholder="Search complaints, areas or keywords">
+    </form>
+    <div class="cf-header__actions">
+      <a class="btn btn-ghost d-none d-md-inline-flex" href="http://localhost:5173/track">Track Complaint</a>
+      <a class="btn btn-primary d-none d-sm-inline-flex" href="http://localhost:5173/report"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg> Report an Issue</a>
+      <button class="cf-burger d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#side-nav" aria-controls="side-nav" aria-label="Open menu"><span></span><span></span></button>
+    </div>
+  </header>
+
+  <div class="cf-shell">
+    <!-- Side navigation (lists of links). Bootstrap "offcanvas-lg": a normal
+         sidebar on large screens, a drawer that slides in on small ones. -->
+    <aside class="cf-side">
+      <div class="offcanvas-lg offcanvas-start cf-side__drawer" id="side-nav" tabindex="-1" aria-label="Site menu">
+        <div class="offcanvas-header">
+          <span class="cf-logo__name">CivicFix</span>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#side-nav" aria-label="Close menu"></button>
+        </div>
+        <nav class="cf-side__inner" aria-label="Services">
+        <div class="cf-side__group">
+          <h2 class="cf-side__title" id="side-0">Citizen services</h2>
+          <ul class="cf-side__list" aria-labelledby="side-0">
+            <li><a class="cf-side__link" href="http://localhost:5173/"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 11 9-7 9 7" /><path d="M5 10v10h14V10" /></svg> Home</a></li>
+            <li><a class="cf-side__link" href="http://localhost:5173/report"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9Z" /><path d="M14 3v6h6M12 12v6M9 15h6" /></svg> Report an Issue</a></li>
+            <li><a class="cf-side__link" href="http://localhost:5173/track"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="2.5" /><circle cx="18" cy="18" r="2.5" /><path d="M8.5 6H15a3 3 0 0 1 0 6H9a3 3 0 0 0 0 6h6.5" /></svg> Track Complaint</a></li>
+            <li><a class="cf-side__link" href="http://localhost:5173/issues"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2Z" /><path d="M9 4v14m6-12v14" /></svg> Explore Issues</a></li>
+          </ul>
+        </div>
+
+        <div class="cf-side__group">
+          <div class="cf-side__rule mb-3" aria-hidden="true"></div>
+          <h2 class="cf-side__title" id="side-1">Information</h2>
+          <ul class="cf-side__list" aria-labelledby="side-1">
+            <li><a class="cf-side__link" href="http://localhost:5173/impact"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" /></svg> Impact</a></li>
+            <li><a class="cf-side__link" href="how-it-works.html" aria-current="page"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17h.01" /></svg> How It Works</a></li>
+            <li><a class="cf-side__link" href="about.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 11v6M12 7.5h.01" /></svg> About</a></li>
+            <li><a class="cf-side__link" href="contact.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg> Contact</a></li>
+            <li><a class="cf-side__link" href="style-guide.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20c3 0 5-1.5 5-4a3 3 0 0 0-3-3c-2 0-3 1.5-3 3.5 0 1.5-.5 2.5-1 3.5Z" /><path d="m9 13 10-10 2 2-10 10" /></svg> Style guide</a></li>
+          </ul>
+        </div>
+
+        <p class="cf-side__note mb-0"><strong>Is it an emergency?</strong><span>For fire, accidents or danger to life, call 112 first. Then report it here.</span></p>
+        </nav>
+      </div>
+    </aside>
+
+    <div class="cf-shell__main">
+  <main id="main" tabindex="-1">
+    <section class="sp-hero">
+      <img class="sp-hero__art" src="images/08-botanical-branch-sketch.png" alt="">
+      <div class="container-xl">
+        <p class="cf-label mb-2">Guide</p>
+        <h1 class="cf-display mb-3" data-reveal>How It Works</h1>
+        <p class="cf-lead" data-reveal>Report. Track. See the Change. Here is what happens to a complaint from the moment you send it.</p>
+      </div>
+    </section>
+
+    <div class="container-xl cf-section">
+      <div class="row g-5">
+        <div class="col-lg-7">
+          <h2 class="cf-h2 mb-3">Four steps</h2>
+          <ol class="sp-steps">
+            <li class="sp-box sp-step" data-reveal>
+              <h3 class="cf-h4 mb-1">Report a problem</h3>
+              <p class="m-0 cf-muted">Choose the category, describe it, add a photo and pick the location.</p>
+              <button type="button" class="btn btn-ghost btn-sm mt-3 sp-step__toggle" aria-expanded="false">Show details</button>
+              <div class="sp-step__details">Before you submit, CivicFix looks for open issues of the same kind within 150 metres. If one matches, you can add your support instead of creating a duplicate. Your name and phone are optional.</div>
+            </li>
+            <li class="sp-box sp-step" data-reveal>
+              <h3 class="cf-h4 mb-1">Track progress</h3>
+              <p class="m-0 cf-muted">You get a reference ID such as CF-2026-00123.</p>
+              <button type="button" class="btn btn-ghost btn-sm mt-3 sp-step__toggle" aria-expanded="false">Show details</button>
+              <div class="sp-step__details">Enter the ID on the Track Complaint page any time. Every change of status is added to the timeline with the date and the official's note.</div>
+            </li>
+            <li class="sp-box sp-step" data-reveal>
+              <h3 class="cf-h4 mb-1">Authorities act</h3>
+              <p class="m-0 cf-muted">Your report reaches the right department.</p>
+              <button type="button" class="btn btn-ghost btn-sm mt-3 sp-step__toggle" aria-expanded="false">Show details</button>
+              <div class="sp-step__details">Officials move the issue to Acknowledged and In Progress, add notes, and merge duplicates of the same problem into one main issue.</div>
+            </li>
+            <li class="sp-box sp-step" data-reveal>
+              <h3 class="cf-h4 mb-1">See the resolution</h3>
+              <p class="m-0 cf-muted">Track the issue until it's resolved.</p>
+              <button type="button" class="btn btn-ghost btn-sm mt-3 sp-step__toggle" aria-expanded="false">Show details</button>
+              <div class="sp-step__details">If a resolved issue isn't really fixed, press "Still not fixed". When three different people do this, it reopens automatically.</div>
+            </li>
+          </ol>
+        </div>
+
+        <div class="col-lg-5">
+          <section class="sp-box" aria-labelledby="merge-title">
+            <h2 id="merge-title" class="cf-h3">How duplicates become one</h2>
+            <p class="cf-muted">Three people report the same pothole. Watch what CivicFix does.</p>
+            <div class="sp-merge" id="merge-demo" aria-hidden="true">
+              <div class="sp-merge__card" style="left:6%;top:14%"><strong>Pothole near bus stop</strong>Reported 4 days ago</div>
+              <div class="sp-merge__card" style="left:44%;top:40%"><strong>Big hole at Green Park</strong>Reported 2 days ago</div>
+              <div class="sp-merge__card" style="left:12%;top:64%"><strong>Road broken at shelter</strong>Reported today</div>
+              <span class="sp-merge__count cf-chip cf-status cf-status--resolved">One issue · reported by 3 people</span>
+            </div>
+            <div class="d-flex gap-2 mt-3">
+              <button type="button" class="btn btn-primary btn-sm" id="merge-play">Merge them</button>
+              <button type="button" class="btn btn-ghost btn-sm" id="merge-reset">Reset</button>
+            </div>
+            <p class="visually-hidden" aria-live="polite" id="merge-status"></p>
+          </section>
+
+          <section class="sp-box" aria-labelledby="sound-title">
+            <h2 id="sound-title" class="cf-h3">The status chime</h2>
+            <p class="cf-muted">This short sound plays in the app when one of your complaints changes status.</p>
+            <audio controls preload="none" id="chime" class="w-100">
+              <source src="media/status-chime.wav" type="audio/wav">
+              Your browser cannot play audio.
+            </audio>
+            <div class="form-check form-switch mt-3">
+              <input class="form-check-input" type="checkbox" role="switch" id="mute">
+              <label class="form-check-label" for="mute">Mute the chime</label>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <section class="sp-box mt-4" aria-labelledby="status-title" data-reveal>
+        <h2 id="status-title" class="cf-h2">What each status means</h2>
+        <div class="table-responsive">
+          <table class="table align-middle mb-0">
+            <thead><tr><th scope="col">Status</th><th scope="col">Meaning</th><th scope="col">Who changes it</th></tr></thead>
+            <tbody>
+              <tr><td><span class="cf-chip cf-status cf-status--reported">Reported</span></td><td>The complaint is public and waiting for the ward office.</td><td>Set automatically</td></tr>
+              <tr><td><span class="cf-chip cf-status cf-status--acknowledged">Acknowledged</span></td><td>An official has seen it and forwarded it to a department.</td><td>Admin</td></tr>
+              <tr><td><span class="cf-chip cf-status cf-status--progress">In Progress</span></td><td>A work crew has been assigned.</td><td>Admin</td></tr>
+              <tr><td><span class="cf-chip cf-status cf-status--resolved">Resolved</span></td><td>The work is done. Three "Still not fixed" votes reopen it.</td><td>Admin; reopened by residents</td></tr>
+              <tr><td><span class="cf-chip cf-status cf-status--merged">Merged</span></td><td>A duplicate, folded into the main report of the same problem.</td><td>Admin</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="mt-5" aria-labelledby="faq-title">
+        <h2 id="faq-title" class="cf-h2 mb-3">Frequently asked questions</h2>
+        <div class="cf-acc" id="faq">
+          <div class="cf-acc__item">
+            <h3><button class="cf-acc__btn" type="button" aria-expanded="false" aria-controls="faq-1">Do I need an account to report?<span class="cf-acc__icon" aria-hidden="true"></span></button></h3>
+            <div class="cf-acc__panel" id="faq-1" hidden>No. You can report anonymously. Name and phone number are optional and are only shown to officials.</div>
+          </div>
+          <div class="cf-acc__item">
+            <h3><button class="cf-acc__btn" type="button" aria-expanded="false" aria-controls="faq-2">What if someone already reported the same problem?<span class="cf-acc__icon" aria-hidden="true"></span></button></h3>
+            <div class="cf-acc__panel" id="faq-2" hidden>We show similar open issues within about 150 metres first. Add your support to the existing report and it climbs the priority list.</div>
+          </div>
+          <div class="cf-acc__item">
+            <h3><button class="cf-acc__btn" type="button" aria-expanded="false" aria-controls="faq-3">What is the priority score?<span class="cf-acc__icon" aria-hidden="true"></span></button></h3>
+            <div class="cf-acc__panel" id="faq-3" hidden>Reports × 3 + upvotes + days ignored + a severity weight (Low 2, Medium 5, High 10, Critical 20). Issues that many people report, that wait long, or that are dangerous rise to the top.</div>
+          </div>
+          <div class="cf-acc__item">
+            <h3><button class="cf-acc__btn" type="button" aria-expanded="false" aria-controls="faq-4">Can people vote many times?<span class="cf-acc__icon" aria-hidden="true"></span></button></h3>
+            <div class="cf-acc__panel" id="faq-4" hidden>No. Your browser gets a random anonymous token; the server stores only a scrambled hash of it with your connection, and refuses a second vote on the same issue.</div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+    </div>
+  </div>
+
+  <footer class="cf-footer">
+    <div class="container-xl">
+      <div class="row g-4">
+        <div class="col-lg-5">
+          <a class="cf-wordmark" href="http://localhost:5173/">CivicFix</a>
+          <p class="cf-small mt-2 mb-0" style="max-width: 34ch">Report civic issues in your locality and follow them until they are fixed.</p>
+        </div>
+        <div class="col-6 col-lg-3">
+          <p class="cf-label mb-3">Citizens</p>
+          <ul class="cf-footer__links">
+            <li><a class="cf-ulink" href="http://localhost:5173/report">Report an Issue</a></li>
+            <li><a class="cf-ulink" href="http://localhost:5173/track">Track Complaint</a></li>
+            <li><a class="cf-ulink" href="http://localhost:5173/issues">Explore Issues</a></li>
+            <li><a class="cf-ulink" href="http://localhost:5173/impact">Impact</a></li>
+          </ul>
+        </div>
+        <div class="col-6 col-lg-3">
+          <p class="cf-label mb-3">CivicFix</p>
+          <ul class="cf-footer__links">
+            <li><a class="cf-ulink" href="how-it-works.html">How It Works</a></li>
+            <li><a class="cf-ulink" href="about.html">About</a></li>
+            <li><a class="cf-ulink" href="contact.html">Contact</a></li>
+            <li><a class="cf-ulink" href="http://localhost:5173/admin">Admin</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="cf-footer__bottom">
+        <span>&copy; 2026 CivicFix &middot; A Web Technology college project</span>
+        <span class="cf-mono" data-clock>IST --:--</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/civicfix-ui.js"></script>
+  <script src="js/civicfix-jquery.js"></script>
+  <script src="js/site.js"></script>
+  <script>
+    // Module 3 (jQuery) on this page.
+    $(function () {
+      // FAQ: our jQuery accordion plugin (slideToggle).
+      $('#faq').cfAccordion();
+
+      // Step details: traversal from the button to its own step.
+      $('.sp-step__toggle').on('click', function () {
+        var $btn = $(this);
+        var $details = $btn.closest('.sp-step').find('.sp-step__details');
+        var open = $btn.attr('aria-expanded') === 'true';
+        $details.stop(true, true).slideToggle(280);
+        $btn.attr('aria-expanded', String(!open)).text(open ? 'Show details' : 'Hide details');
+      });
+
+      // Duplicate merge demo: .animate() moves the three cards into one spot.
+      var $cards = $('#merge-demo .sp-merge__card');
+      var start = $cards.map(function () { return { left: this.style.left, top: this.style.top }; }).get();
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      $('#merge-play').on('click', function () {
+        $cards.each(function (i) {
+          $(this).stop(true).animate({ left: '30%', top: (28 + i * 3) + '%', opacity: i === 0 ? 1 : 0.0 }, reduce ? 0 : 700 + i * 150);
+        });
+        $('#merge-demo .sp-merge__count').delay(reduce ? 0 : 900).fadeIn(300);
+        $('#merge-status').text('The three reports were merged into one issue reported by 3 people.');
+      });
+      $('#merge-reset').on('click', function () {
+        $cards.each(function (i) { $(this).stop(true).css({ left: start[i].left, top: start[i].top, opacity: 1 }); });
+        $('#merge-demo .sp-merge__count').stop(true, true).hide();
+        $('#merge-status').text('');
+      });
+
+      // Audio: the mute switch mutes the <audio> element.
+      $('#mute').on('change', function () {
+        $('#chime').prop('muted', this.checked);
+      });
+    });
+  </script>
+</body>
+</html>

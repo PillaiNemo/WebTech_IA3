@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CivicFix Server</title>
+  <meta name="description" content="CivicFix API status page">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --saffron: #8F2F2B; /* accent: brick maroon (name kept so the rules below stay short) */
+      --green: #3D9355;
+
+      --bg: #F8F2E7;
+      --surface: #FFFDF9;
+      --line: rgba(31, 27, 23, 0.10);
+      --text: #1F1B17;
+      --muted: #6B645C;
+
+      --font-display: "Libre Caslon Text", Georgia, "Times New Roman", serif;
+      --font-ui: "Inter", "Segoe UI", system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-ui);
+      line-height: 1.5;
+    }
+
+    .wrap { max-width: 1040px; margin: 0 auto; padding: 48px 16px 64px; }
+
+    header { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+
+    .wordmark { font-family: var(--font-display); font-size: 1.4rem; letter-spacing: -0.02em; }
+
+    .tag {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 12px;
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-weight: 300;
+      font-size: clamp(2.6rem, 7vw, 5.2rem);
+      line-height: 1;
+      letter-spacing: -0.035em;
+      margin: 72px 0 20px;
+    }
+    h1 em { font-style: italic; color: var(--saffron); }
+
+    .lede { color: var(--muted); max-width: 52ch; margin: 0 0 48px; }
+
+    .grid { display: grid; gap: 16px; grid-template-columns: 1fr; }
+    @media (min-width: 760px) { .grid { grid-template-columns: 1.1fr 0.9fr; } }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: 0 20px 50px -30px rgba(0, 0, 0, 0.6);
+    }
+    .card h2 {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      font-weight: 500;
+      margin: 0 0 20px;
+    }
+
+    /* Live status dot */
+    .status-row { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+    .dot { width: 12px; height: 12px; border-radius: 50%; background: #64748B; flex-shrink: 0; position: relative; }
+    .dot::after {
+      content: "";
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      border: 2px solid currentColor;
+      opacity: 0;
+    }
+    .dot.ok { background: #2BB24C; color: #2BB24C; }
+    .dot.ok::after { animation: ping 1.8s ease-out infinite; }
+    .dot.warn { background: #F2B33D; color: #F2B33D; }
+    .dot.bad { background: #E5484D; color: #E5484D; }
+    @keyframes ping {
+      from { transform: scale(0.6); opacity: 0.7; }
+      to { transform: scale(1.6); opacity: 0; }
+    }
+    .status-label { font-family: var(--font-display); font-size: 1.6rem; letter-spacing: -0.02em; }
+
+    dl { display: grid; grid-template-columns: auto 1fr; gap: 8px 20px; margin: 0; font-size: 0.92rem; }
+    dt { color: var(--muted); }
+    dd { margin: 0; font-variant-numeric: tabular-nums; word-break: break-all; }
+
+    .hint { margin-top: 18px; font-size: 0.85rem; color: var(--muted); }
+
+    a { color: var(--saffron); text-underline-offset: 3px; }
+    a:focus-visible { outline: 2px solid var(--saffron); outline-offset: 3px; border-radius: 6px; }
+
+    code { font-family: ui-monospace, Consolas, monospace; font-size: 0.88em; color: var(--text); }
+
+    .endpoints { list-style: none; padding: 0; margin: 0; }
+    .endpoints li { display: flex; gap: 12px; align-items: baseline; padding: 10px 0; border-bottom: 1px solid var(--line); }
+    .endpoints li:last-child { border-bottom: 0; }
+    .method { font-size: 0.7rem; font-weight: 700; color: #2F6B36; background: #DCEBD9; padding: 2px 8px; border-radius: 6px; }
+    .soon { color: var(--muted); font-size: 0.85rem; margin-left: auto; }
+
+    /* Palette swatches */
+    .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+    .swatch { border: 1px solid var(--line); border-radius: 18px; overflow: hidden; background: var(--bg); }
+    .swatch .chip { height: 84px; transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); transform-origin: bottom; }
+    .swatch:hover .chip { transform: scaleY(1.08); }
+    .swatch .meta { padding: 12px 14px; font-size: 0.85rem; }
+    .swatch .meta strong { display: block; font-weight: 500; }
+    .swatch .meta span { color: var(--muted); font-family: ui-monospace, Consolas, monospace; font-size: 0.8rem; }
+
+    .palette-card { margin-top: 16px; }
+    .sub { margin: 28px 0 14px; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--muted); }
+
+    footer { margin-top: 40px; color: var(--muted); font-size: 0.85rem; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .dot.ok::after { animation: none; }
+      .swatch .chip { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="wordmark">CivicFix</div>
+      <div class="tag">API</div>
+    </header>
+
+    <main>
+      <h1>CivicFix server is <em>running</em>.</h1>
+      <p class="lede">This is the backend for CivicFix, the civic issue reporting platform. The React app talks to it through <code>/api</code>. The database status below refreshes every 5 seconds.</p>
+
+      <div class="grid">
+        <section class="card" aria-labelledby="db-title">
+          <h2 id="db-title">Database</h2>
+          <div class="status-row" role="status" aria-live="polite">
+            <span class="dot" id="db-dot" aria-hidden="true"></span>
+            <span class="status-label" id="db-label">Checking...</span>
+          </div>
+          <dl>
+            <dt>Database</dt><dd id="db-name">-</dd>
+            <dt>Host</dt><dd id="db-host">-</dd>
+            <dt>Ping</dt><dd id="db-ping">-</dd>
+            <dt>Server uptime</dt><dd id="uptime">-</dd>
+            <dt>Last checked</dt><dd id="checked">-</dd>
+          </dl>
+          <p class="hint" id="db-hint" hidden>Is MongoDB running? On Windows open <em>Services</em> and start <code>MongoDB</code>. The server keeps retrying on its own.</p>
+        </section>
+
+        <section class="card" aria-labelledby="api-title">
+          <h2 id="api-title">Endpoints</h2>
+          <ul class="endpoints">
+            <li><span class="method">GET</span><a href="/api/health"><code>/api/health</code></a></li>
+            <li><span class="method">GET</span><a href="/api/issues?limit=3"><code>/api/issues</code></a></li>
+            <li><span class="method">GET</span><a href="/api/track/CF-2026-00001"><code>/api/track/:id</code></a></li>
+            <li><span class="method">GET</span><a href="/api/stats"><code>/api/stats</code></a></li>
+            <li><span class="method">GET</span><a href="/api-playground.html"><code>API playground</code></a><span class="soon">test every endpoint</span></li>
+          </ul>
+        </section>
+      </div>
+
+      <section class="card palette-card" aria-labelledby="palette-title">
+        <h2 id="palette-title">Palette</h2>
+        <div class="swatches">
+          <div class="swatch"><div class="chip" style="background:#8F2F2B"></div><div class="meta"><strong>Brick Maroon</strong><span>#8F2F2B</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#3B4D3E"></div><div class="meta"><strong>Deep Sage</strong><span>#3B4D3E</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#4F6B52"></div><div class="meta"><strong>Sage</strong><span>#4F6B52</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#F8F2E7"></div><div class="meta"><strong>Cream</strong><span>#F8F2E7</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#FFFDF9"></div><div class="meta"><strong>Paper</strong><span>#FFFDF9</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#1F1B17"></div><div class="meta"><strong>Ink</strong><span>#1F1B17</span></div></div>
+        </div>
+        <p class="sub">Status colours</p>
+        <div class="swatches">
+          <div class="swatch"><div class="chip" style="background:#F6DCE1"></div><div class="meta"><strong>Reported</strong><span>#8E3A4E on #F6DCE1</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#F8E6C9"></div><div class="meta"><strong>Acknowledged</strong><span>#8A5A12 on #F8E6C9</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#F8DCCB"></div><div class="meta"><strong>In Progress</strong><span>#A0472A on #F8DCCB</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#DCEBD9"></div><div class="meta"><strong>Resolved</strong><span>#2F6B36 on #DCEBD9</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#E7E3EC"></div><div class="meta"><strong>Merged</strong><span>#5F5878 on #E7E3EC</span></div></div>
+          <div class="swatch"><div class="chip" style="background:#9B1C1C"></div><div class="meta"><strong>Critical</strong><span>#9B1C1C</span></div></div>
+        </div>
+      </section>
+    </main>
+
+    <footer>CivicFix · Web Technology project · React app runs separately at <a href="http://localhost:5173">localhost:5173</a></footer>
+  </div>
+
+  <script>
+    // Polls GET /api/health and paints the database status card.
+    const $ = (id) => document.getElementById(id);
+
+    const LABELS = {
+      connected: ['Connected', 'ok'],
+      connecting: ['Connecting...', 'warn'],
+      disconnecting: ['Disconnecting...', 'warn'],
+      disconnected: ['Not connected', 'bad']
+    };
+
+    function formatUptime(seconds) {
+      const m = Math.floor(seconds / 60);
+      const s = seconds % 60;
+      return m > 0 ? `${m}m ${s}s` : `${s}s`;
+    }
+
+    async function checkHealth() {
+      try {
+        const res = await fetch('/api/health', { cache: 'no-store' });
+        const data = await res.json();
+        const db = data.database;
+        const [label, tone] = LABELS[db.state] || ['Unknown', 'warn'];
+
+        $('db-dot').className = `dot ${tone}`;
+        $('db-label').textContent = label;
+        $('db-name').textContent = db.name || '-';
+        $('db-host').textContent = db.host || '-';
+        $('db-ping').textContent = db.pingMs === null ? '-' : `${db.pingMs} ms`;
+        $('uptime').textContent = formatUptime(data.uptimeSeconds);
+        $('db-hint').hidden = db.state === 'connected';
+      } catch {
+        $('db-dot').className = 'dot bad';
+        $('db-label').textContent = 'Server unreachable';
+        $('db-hint').hidden = true;
+      }
+      $('checked').textContent = new Date().toLocaleTimeString();
+    }
+
+    checkHealth();
+    setInterval(checkHealth, 5000);
+  </script>
+</body>
+</html>
